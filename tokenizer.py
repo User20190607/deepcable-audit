@@ -88,7 +88,8 @@ BASE_MODELS = sorted([
 # 前缀（可选，按长度降序）
 PREFIXES = sorted([
     'WDZBN', 'WDZAN', 'WDZCN', 'WDZN', 'WDZC', 'WDZA', 'WDZB',
-    'WDUZ', 'ZCN', 'ZBN', 'ZAN', 'ZR', 'ZA', 'ZB', 'ZC', 'NH', 'N',
+    'WDUZ', 'WDZ',
+    'ZCN', 'ZBN', 'ZAN', 'ZR', 'ZA', 'ZB', 'ZC', 'NH', 'N',
 ], key=len, reverse=True)
 
 

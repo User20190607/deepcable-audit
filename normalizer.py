@@ -70,6 +70,8 @@ def _fix_prefix(spec: CableSpec) -> None:
         spec.prefix = 'ZAN'
 
     # 非法前缀修正
+    if p == 'WDZ':
+        spec.prefix = 'WDZC'
     if p.startswith('WDZD') and not any(b in spec.base for b in ('YJV', 'YJY')):
         spec.prefix = 'WDZC'
     if p.startswith('WDZDN'):
@@ -147,6 +149,7 @@ def normalize_string(s: str, base: str, prefix: str) -> str:
     s = re.sub(r'^N-ZA-', 'ZAN-', s)
     s = re.sub(r'^WDZD-(?!YJV|YJY)', 'WDZC-', s)
     s = re.sub(r'^WDZDN-', 'WDZCN-', s)
+    s = re.sub(r'^WDZ-(?!B|A|C|N|D)', 'WDZC-', s)
     s = re.sub(r'^ZDN-', 'ZCN-', s)
     s = re.sub(r'^WDNH-(?=RYY|RYJY|KYJY)', 'WDZN-', s)
     s = re.sub(r'^ZRC-', 'ZC-', s)

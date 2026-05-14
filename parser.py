@@ -20,7 +20,8 @@ from spec import CableSpec, CoreSpec
 
 PREFIXES = [
     'WDZBN', 'WDZAN', 'WDZCN', 'WDZN', 'WDZC', 'WDZA', 'WDZB',
-    'WDUZ', 'ZCN', 'ZBN', 'ZAN', 'ZR', 'ZA', 'ZB', 'ZC', 'NH', 'N',
+    'WDUZ', 'WDZ',
+    'ZCN', 'ZBN', 'ZAN', 'ZR', 'ZA', 'ZB', 'ZC', 'NH', 'N',
 ]
 
 BASE_MODELS = [

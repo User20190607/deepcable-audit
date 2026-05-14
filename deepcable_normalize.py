@@ -22,6 +22,7 @@ from normalizer import normalize as normalize_ast
 from aggregator import aggregate, sort_key
 from validation import check_pe
 from excel_output import to_excel
+from model_interpreter import interpret_model
 
 
 def normalize(raw: str) -> str | None:
@@ -94,4 +95,4 @@ def _normalize_pipeline(raw: str, with_log: bool = False) -> str | None | tuple[
 
 
 # 重新导出
-__all__ = ['normalize', 'aggregate', 'to_excel', 'check_pe', 'sort_key']
+__all__ = ['normalize', 'aggregate', 'to_excel', 'check_pe', 'sort_key', 'interpret_model']

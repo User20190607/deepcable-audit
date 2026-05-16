@@ -49,35 +49,49 @@ def normalize_ast(spec: CableSpec) -> CableSpec:
 
 
 def _fix_prefix(spec: CableSpec) -> None:
-    """前缀标准化"""
+    """前缀标准化 per GB/T 19666-2019"""
     p = spec.prefix
     old = p
 
-    # NH → N（GB/T 19666 废弃 NH，改用 N）
+    # ── 1. 废弃代号替换 ──
     if p == 'NH':
         spec.prefix = 'N'
+        p = 'N'
     elif p == 'ZR':
         spec.prefix = 'ZC'
+        p = 'ZC'
     elif p == 'ZRC':
         spec.prefix = 'ZC'
+        p = 'ZC'
 
-    # NH-ZC → ZCN
-    if p.startswith('N-ZC'):
-        spec.prefix = 'ZCN'
-    elif p.startswith('N-ZB'):
-        spec.prefix = 'ZBN'
-    elif p.startswith('N-ZA'):
-        spec.prefix = 'ZAN'
+    # ── 2. 顺序修正 (N-ZC → ZCN 等) ──
+    order_map = {
+        'N-ZC': 'ZCN', 'N-ZB': 'ZBN', 'N-ZA': 'ZAN', 'N-ZD': 'ZDN',
+        'N-Z': 'ZN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
+        'NH-ZC': 'ZCN', 'NH-ZB': 'ZBN', 'NH-ZA': 'ZAN',
+    }
+    for wrong, right in order_map.items():
+        if p.startswith(wrong):
+            p = right + p[len(wrong):]
+            break
+    for wrong, right in order_map.items():
+        if p.startswith(wrong):
+            p = right + p[len(wrong):]
+            break
 
-    # 非法前缀修正
-    if p == 'WDZ':
-        spec.prefix = 'WDZC'
-    if p.startswith('WDZD') and not any(b in spec.base for b in ('YJV', 'YJY')):
-        spec.prefix = 'WDZC'
-    if p.startswith('WDZDN'):
-        spec.prefix = 'WDZCN'
-    if p.startswith('ZDN'):
-        spec.prefix = 'ZCN'
+    # ── 3. 逆序修正 (DW → WD, DUW → WDU 等) ──
+    if p.startswith('DW'):
+        p = 'WD' + p[2:]
+    if p.startswith('DUW'):
+        p = 'WDU' + p[3:]
+    if p.startswith('UW'):
+        p = 'WU' + p[2:]
+
+    # ── 4. WDZ (单根阻燃) 是合法型号，保留 ──
+    # 之前 WRONG: if p == 'WDZ': spec.prefix = 'WDZC'
+    # GB/T 19666 表2: WDZ=无卤低烟单根阻燃, WDZC=无卤低烟阻燃C类 — 两者不同
+
+    spec.prefix = p
 
     if spec.prefix != old:
         spec.patch_log.append(f'[P1] {old}→{spec.prefix}')
@@ -125,6 +139,31 @@ def _fix_wd_material(spec: CableSpec) -> None:
             spec.patch_log.append(f'[P3] {old}→{spec.base}')
 
 
+def _validate_prefix(spec: CableSpec) -> list[str]:
+    """校验前缀合法性 per GB/T 19666-2019，返回警告列表"""
+    p = spec.prefix
+    if not p:
+        return []
+    warnings = []
+
+    # U 前必须有 WD
+    if 'U' in p:
+        if not p.startswith('WD'):
+            warnings.append(f'低毒(U)前缀必须有无卤低烟(WD)，当前: {p}')
+
+    # D 前必须有 W
+    if 'D' in p and p[0] == 'D':
+        warnings.append(f'低烟(D)前必须有无卤(W)，当前: {p}')
+
+    # NJ/NS 提示
+    if 'NJ' in p:
+        warnings.append(f'[INFO] NJ=供火+机械冲击耐火，用于有机械冲击风险的场景')
+    if 'NS' in p:
+        warnings.append(f'[INFO] NS=供火+冲击+喷水耐火，最严苛耐火等级')
+
+    return warnings
+
+
 # ── 字符串级标准化 ────────────────────────────────────────────────────
 # 以下规则在序列化后的字符串上操作（逐步迁移到 AST 层）
 
@@ -144,15 +183,21 @@ def normalize_string(s: str, base: str, prefix: str) -> str:
     s = re.sub(r'^NHBV', 'N-BV', s)
     s = re.sub(r'^NHBVR', 'N-BVR', s)
     s = re.sub(r'^NH-', 'N-', s)
+    # N-ZC → ZCN 等（顺序修正）
     s = re.sub(r'^N-ZC-', 'ZCN-', s)
     s = re.sub(r'^N-ZB-', 'ZBN-', s)
     s = re.sub(r'^N-ZA-', 'ZAN-', s)
-    s = re.sub(r'^WDZD-(?!YJV|YJY)', 'WDZC-', s)
-    s = re.sub(r'^WDZDN-', 'WDZCN-', s)
-    s = re.sub(r'^WDZ-(?!B|A|C|N|D)', 'WDZC-', s)
-    s = re.sub(r'^ZDN-', 'ZCN-', s)
+    s = re.sub(r'^N-ZD-', 'ZDN-', s)
+    s = re.sub(r'^N-WDZC-', 'WDZCN-', s)
+    s = re.sub(r'^N-WDZB-', 'WDZBN-', s)
+    s = re.sub(r'^N-WDZA-', 'WDZAN-', s)
+    # WDZ 单根阻燃是合法型号 (GB/T 19666 表2)
+    # 不再强制转 WDZC
+    # NH+WD → WDZN 合并
     s = re.sub(r'^WDNH-(?=RYY|RYJY|KYJY)', 'WDZN-', s)
     s = re.sub(r'^ZRC-', 'ZC-', s)
+    s = re.sub(r'^DWZ', 'WDZ', s)
+    s = re.sub(r'^DWU', 'WDU', s)
 
     # 型号映射（补充 AST 层漏掉的）
     s = re.sub(r'(?<![A-Z])RYS(?![JP])', 'RYJS', s)

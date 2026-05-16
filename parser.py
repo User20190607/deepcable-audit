@@ -19,9 +19,37 @@ from spec import CableSpec, CoreSpec
 # ── 已知型号列表 ────────────────────────────────────────────────────
 
 PREFIXES = [
-    'WDZBN', 'WDZAN', 'WDZCN', 'WDZN', 'WDZC', 'WDZA', 'WDZB',
-    'WDUZ', 'WDZ',
-    'ZCN', 'ZBN', 'ZAN', 'ZR', 'ZA', 'ZB', 'ZC', 'NH', 'N',
+    # ── 含连字符的复合前缀（先匹配，更长）──
+    'NH-ZC', 'NH-ZB', 'NH-ZA',
+    'N-ZC', 'N-ZB', 'N-ZA', 'N-ZD', 'N-Z',
+    'N-WDZC', 'N-WDZB', 'N-WDZA',
+    # ── 无卤低烟低毒阻燃耐火 (WDUZ + grade + N/NJ/NS) ──
+    'WDUZDNJ', 'WDUZDNS', 'WDUZDN',
+    'WDUZCNJ', 'WDUZCNS', 'WDUZCN',
+    'WDUZBNJ', 'WDUZBNS', 'WDUZBN',
+    'WDUZANJ', 'WDUZANS', 'WDUZAN',
+    'WDUZNJ', 'WDUZNS', 'WDUZN',
+    # ── 无卤低烟低毒阻燃 (WDUZ + grade) ──
+    'WDUZD', 'WDUZC', 'WDUZB', 'WDUZA', 'WDUZ',
+    # ── 无卤低烟阻燃耐火 (WDZ + grade + N/NJ/NS) ──
+    'WDZDNJ', 'WDZDNS', 'WDZDN',
+    'WDZCNJ', 'WDZCNS', 'WDZCN',
+    'WDZBNJ', 'WDZBNS', 'WDZBN',
+    'WDZANJ', 'WDZANS', 'WDZAN',
+    'WDZNJ', 'WDZNS', 'WDZN',
+    # ── 无卤低烟阻燃 (WDZ + grade) ──
+    'WDZD', 'WDZC', 'WDZB', 'WDZA', 'WDZ',
+    # ── 含卤阻燃耐火 (Z[A~D] + N/NJ/NS) ──
+    'ZDNJ', 'ZDNS', 'ZDN',
+    'ZCNJ', 'ZCNS', 'ZCN',
+    'ZBNJ', 'ZBNS', 'ZBN',
+    'ZANJ', 'ZANS', 'ZAN',
+    # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
+    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
+    # ── 纯耐火 (含卤) ──
+    'NJ', 'NS', 'N',
+    # ── 废弃代号 ──
+    'NH',
 ]
 
 BASE_MODELS = [

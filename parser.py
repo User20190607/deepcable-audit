@@ -17,8 +17,9 @@ from spec import CableSpec, CoreSpec
 
 
 # ── 已知型号列表 ────────────────────────────────────────────────────
+# 预编译：按长度降序排列，避免短型号提前匹配
 
-PREFIXES = [
+_PREFIXES_LIST = [
     # ── 含连字符的复合前缀（先匹配，更长）──
     'NH-ZC', 'NH-ZB', 'NH-ZA',
     'N-ZC', 'N-ZB', 'N-ZA', 'N-ZD', 'N-Z',
@@ -51,8 +52,10 @@ PREFIXES = [
     # ── 废弃代号 ──
     'NH',
 ]
+PREFIXES = sorted(_PREFIXES_LIST, key=len, reverse=True)
+_PREFIXES_SET = frozenset(PREFIXES)
 
-BASE_MODELS = [
+_BASE_MODELS_LIST = [
     'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
     'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP',
     'DJYPVRP', 'DJYVP',
@@ -61,12 +64,16 @@ BASE_MODELS = [
     'BBTRZ', 'RTTYZ', 'RTTVZ', 'RTTZ', 'RZDJ', 'RZDF',
     'BVV', 'KYJP', 'RYJ',
 ]
+BASE_MODELS = sorted(_BASE_MODELS_LIST, key=len, reverse=True)
 
 # 用于检查 rest 是否以已知 base 开头（支持无短横前缀）
-_BASE_SET = frozenset(BASE_MODELS)
+_BASE_SET = frozenset(_BASE_MODELS_LIST)
 
-VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK]?V)'
-CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
+# 预编译正则
+_V_VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK][vV])'
+_CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
+_VOLTAGE_RE = re.compile(_V_VOLTAGE_PATTERN)
+_CORE_RE = re.compile(_CORE_PATTERN)
 
 
 # ── 格式统一 ─────────────────────────────────────────────────────────
@@ -155,7 +162,7 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
             return spec
 
     # Step 4: 提取电压
-    vm = re.search(VOLTAGE_PATTERN, r)
+    vm = _VOLTAGE_RE.search(r)
     if vm:
         spec.voltage = vm.group(1)
         r = r[:vm.start()] + r[vm.end():]
@@ -179,7 +186,7 @@ def _parse_cores(s: str) -> list[CoreSpec]:
     parts = re.split(r'\s*\+\s*', s)
     result = []
     for part in parts:
-        m = re.search(CORE_PATTERN, part)
+        m = _CORE_RE.search(part)
         if m:
             result.append(CoreSpec(int(m.group(1)), float(m.group(2))))
         # 裸数字 → 单芯线：BV2.5 → 1×2.5

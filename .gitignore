@@ -1,6 +1,25 @@
+```gitignore
+# Python
 __pycache__/
 *.pyc
-.DS_Store
-*.egg-info/
-dist/
-build/
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Tests
+.pytest_cache/
+.mypy_cache/
+```

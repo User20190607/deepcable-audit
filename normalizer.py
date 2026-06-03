@@ -26,7 +26,7 @@ VOLTAGE_MAP = [
     (['KVVP', 'KYJV'],                     '450/750V'),
     (['KYJY'],                             '450/750V'),
     (['BYJR', 'BVR'],                      '450/750V'),
-    (['BYJ', 'BV'],                        '450/750V'),
+    (['WDZ-BYJ', 'BYJ', 'BV'],             '450/750V'),
     (['RYJY', 'RYY', 'RVV'],               '300/500V'),
     (['RYJYP', 'RVVP'],                    '300/300V'),
     (['BVV'],                              '300/500V'),
@@ -67,8 +67,9 @@ def _fix_prefix(spec: CableSpec) -> None:
     # ── 2. 顺序修正 (N-ZC → ZCN 等) ──
     order_map = {
         'N-ZC': 'ZCN', 'N-ZB': 'ZBN', 'N-ZA': 'ZAN', 'N-ZD': 'ZDN',
-        'N-Z': 'ZN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
+        'N-Z': 'ZCN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
         'NH-ZC': 'ZCN', 'NH-ZB': 'ZBN', 'NH-ZA': 'ZAN',
+        'ZN': 'ZCN', 'ZRNH': 'ZCN', 'NHZR': 'ZCN',
     }
     for wrong, right in order_map.items():
         if p.startswith(wrong):
@@ -233,15 +234,23 @@ def fix_voltage(s: str, base: str) -> str:
     # 补充分隔符
     s = re.sub(r'(\d+[kK]V)(\d)', r'\1-\2', s)
 
+    # 系统电压转换为额定电压 (U0/U)
+    # 10kV 系统 → 8.7/15kV 电缆
+    s = re.sub(r'(?<![0-9./])10[kK][vV]', '8.7/15kV', s)
+    # 6kV 系统 → 3.6/6kV 电缆  
+    s = re.sub(r'(?<![0-9./])6[kK][vV](?!/)', '3.6/6kV', s)
+    # 35kV 系统 → 26/35kV 电缆
+    s = re.sub(r'(?<![0-9./])35[kK][vV]', '26/35kV', s)
+    
     # 电压格式统一
     s = re.sub(r'0\.6/1\.0[kK]V', '0.6/1kV', s)
     s = re.sub(r'0\.3/0\.5[kK]?V', '300/500V', s)
     s = re.sub(r'0\.45/0\.75[kK]?V', '450/750V', s)
-    s = re.sub(r'(?<![0-9]/|10)1[kK]V(?!V)', '0.6/1kV', s)
+    s = re.sub(r'(?<!/)1[kK]V(?!V)', '0.6/1kV', s)
     s = re.sub(r'0\.6[kK]V(?!\/1)', '0.6/1kV', s)
 
     # kV 统一小写
-    s = re.sub(r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?)[kK]V', r'\1kV', s)
+    s = re.sub(r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?)[kK][vV]', r'\1kV', s)
 
     # 电压死锁补全（对已知型号）
     has_voltage = bool(re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s))

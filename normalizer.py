@@ -258,24 +258,25 @@ def fix_voltage(s: str, base: str) -> str:
     if not has_voltage:
         # RVSP 优先匹配
         if 'RVSP' in s and RVSP_VOLTAGE not in s:
-            s = re.sub(r'(RVSP)(-B1)?-?(\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
+            s = re.sub(r'(RVSP)(-B[12])?-?(\\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
 
         for pats, volt in VOLTAGE_MAP:
             for pat in pats:
                 if pat in s and volt not in s:
-                    s = re.sub(rf'({pat})(-B1)?-?(\d)', rf'\1\2-{volt}-\3', s)
+                    # 支持-B1/-B2 等级在型号后
+                    s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-{volt}-\3', s)
                     break
 
         # YJV22/YJV/YJY 电压
         for pat in ['YJV22', 'YJV', 'YJY']:
             if pat in s and not re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s):
-                s = re.sub(rf'({pat})(-B1)?-?(\d)', rf'\1\2-0.6/1kV-\3', s)
+                s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-0.6/1kV-\3', s)
                 break
 
         # VV 单独处理
         if re.search(r'(?<![A-Z])VV(?![A-Z])', s) and 'YJV' not in s \
            and not re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s):
-            s = re.sub(r'(\bVV|-VV)(-B1)?-?(\d)', r'\1\2-0.6/1kV-\3', s)
+            s = re.sub(r'(\bVV|-VV)(-B[12])?-?(\d)', r'\1\2-0.6/1kV-\3', s)
 
     return s
 

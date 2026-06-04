@@ -21,7 +21,7 @@ from spec import CableSpec, CoreSpec
 SINGLE_CORE_WIRES = {'BYJ', 'BYJR', 'BVR', 'BV'}
 
 VOLTAGE_MAP = [
-    (['RYJSP', 'RYSP', 'RYJS', 'RVS'],    '300/300V'),
+    (['RYJSP', 'RYSP', 'RYJS', 'RVS', 'RVSP', 'RVVSP'],    '300/300V'),
     (['KYJYP'],                            '450/750V'),
     (['KVVP', 'KYJV'],                     '450/750V'),
     (['KYJY'],                             '450/750V'),
@@ -80,13 +80,22 @@ def _fix_prefix(spec: CableSpec) -> None:
             p = right + p[len(wrong):]
             break
 
-    # ── 3. 逆序修正 (DW → WD, DUW → WDU 等) ──
+    # ── 3. 逆序修正 (DW → WD, DUW → WDU, DZ → ZD 等) ──
     if p.startswith('DW'):
         p = 'WD' + p[2:]
     if p.startswith('DUW'):
         p = 'WDU' + p[3:]
     if p.startswith('UW'):
         p = 'WU' + p[2:]
+    # DZ 系列前缀转换：DZC→ZC, DZB→ZB, DZA→ZA, DZ→ZC
+    if p == 'DZC':
+        p = 'ZC'
+    elif p == 'DZB':
+        p = 'ZB'
+    elif p == 'DZA':
+        p = 'ZA'
+    elif p == 'DZ':
+        p = 'ZC'
 
     # ── 4. WDZ (单根阻燃) 是合法型号，保留 ──
     # 之前 WRONG: if p == 'WDZ': spec.prefix = 'WDZC'
@@ -258,19 +267,19 @@ def fix_voltage(s: str, base: str) -> str:
     if not has_voltage:
         # RVSP 优先匹配
         if 'RVSP' in s and RVSP_VOLTAGE not in s:
-            s = re.sub(r'(RVSP)(-B[12])?-?(\\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
+            s = re.sub(r'(RVSP)(-B[12])?-?(\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
 
         for pats, volt in VOLTAGE_MAP:
             for pat in pats:
                 if pat in s and volt not in s:
                     # 支持-B1/-B2 等级在型号后
-                    s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-{volt}-\3', s)
+                    s = re.sub(rf'({pat})(-B[12])?-?(\d)', rf'\1\2-{volt}-\3', s)
                     break
 
         # YJV22/YJV/YJY 电压
         for pat in ['YJV22', 'YJV', 'YJY']:
             if pat in s and not re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s):
-                s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-0.6/1kV-\3', s)
+                s = re.sub(rf'({pat})(-B[12])?-?(\d)', rf'\1\2-0.6/1kV-\3', s)
                 break
 
         # VV 单独处理

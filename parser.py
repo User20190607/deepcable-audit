@@ -46,18 +46,20 @@ _PREFIXES_LIST = [
     'ZBNJ', 'ZBNS', 'ZBN',
     'ZANJ', 'ZANS', 'ZAN',
     # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
-    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
+    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'ZRC', 'ZRB', 'ZRA', 'Z',
     # ── 纯耐火 (含卤) ──
     'NJ', 'NS', 'N',
     # ── 废弃代号 ──
     'NH',
+    # ── 企业标准前缀 (DZC=低烟阻燃 C 类，转换为 ZC) ──
+    'DZC', 'DZB', 'DZA', 'DZ',
 ]
 PREFIXES = sorted(_PREFIXES_LIST, key=len, reverse=True)
 _PREFIXES_SET = frozenset(PREFIXES)
 
 _BASE_MODELS_LIST = [
     'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP',
+    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP', 'RVVSP',
     'DJYPVRP', 'DJYVP',
     'BYJR', 'BYJ', 'BVR', 'BV',
     'RYJY', 'RYY', 'RVV', 'RVVP',

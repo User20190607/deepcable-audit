@@ -77,7 +77,7 @@ def detect_pv(raw: str) -> Optional[dict]:
 # 所有支持的基础型号（按长度降序排列，避免短型号提前匹配）
 BASE_MODELS = sorted([
     'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP',
+    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP', 'RVVSP',
     'DJYPVRP', 'DJYVP',
     'BYJR', 'BYJ', 'BVR', 'BV',
     'RYJY', 'RYY', 'RVV', 'RVVP',

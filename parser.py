@@ -166,6 +166,21 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
             spec.base = r
             return spec
 
+    # Step 3.5: 提取 RTTZ 等矿物绝缘电缆的燃烧性能等级后缀 (如 RTTZ-A 中的 A)
+    # 格式：BASE-[A/B/C/D]-...，其中 A/B/C/D 表示 GB 31247 燃烧性能等级
+    # A=不燃，B1=难燃，B2=可燃，B3=易燃
+    if spec.base in ('RTTZ', 'RTTYZ', 'RTTVZ', 'BBTRZ'):
+        grade_match = re.match(r'^([ABCD])(?:-(.*))?$', r)
+        if grade_match:
+            grade = grade_match.group(1)
+            # 将燃烧性能等级标记到 b1/b2 字段：A 级→b1=True
+            if grade == 'A':
+                spec.b1 = True  # A 级是最高燃烧性能等级（不燃）
+            elif grade == 'B':
+                pass  # B 级默认处理
+            # C/D 级暂不处理
+            r = grade_match.group(2) or ''
+
     # Step 4: 提取电压
     vm = _VOLTAGE_RE.search(r)
     if vm:

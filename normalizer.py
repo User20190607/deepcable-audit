@@ -31,7 +31,7 @@ VOLTAGE_MAP = [
     (['RYJYP', 'RVVP'],                    '300/300V'),
     (['BVV'],                              '300/500V'),
     (['DJYPVRP', 'DJYVP'],                 '300/500V'),
-    (['RTTZ', 'RTTYZ', 'RTTVZ'],           '0.6/1kV'),
+    (['RTTZ', 'RTTYZ', 'RTTVZ', 'BBTRZ'],  '0.6/1kV'),
     (['RZDJ', 'RZDF'],                     '450/750V'),
 ]
 

@@ -135,10 +135,13 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
                 r = rest.lstrip('-')
                 break
 
-    # Step 2: 提取 B1 标志
-    if '-B1-' in r or '-B1' in r:
+    # Step 2: 提取 B1/B2 标志
+    if 'B1-' in r or '-B1-' in r or r.startswith('B1'):
         spec.b1 = True
-        r = re.sub(r'-B1-?', '-', r)
+        r = re.sub(r'B1-?', '', r)
+    elif 'B2-' in r or '-B2-' in r or r.startswith('B2'):
+        spec.b2 = True
+        r = re.sub(r'B2-?', '', r)
 
     # Step 3: 提取基础型号
     found_base = False

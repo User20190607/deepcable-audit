@@ -26,7 +26,7 @@ VOLTAGE_MAP = [
     (['KVVP', 'KYJV'],                     '450/750V'),
     (['KYJY'],                             '450/750V'),
     (['BYJR', 'BVR'],                      '450/750V'),
-    (['WDZ-BYJ', 'BYJ', 'BV'],             '450/750V'),
+    (['BYJ', 'BV'],                        '450/750V'),
     (['RYJY', 'RYY', 'RVV'],               '300/500V'),
     (['RYJYP', 'RVVP'],                    '300/300V'),
     (['BVV'],                              '300/500V'),
@@ -67,7 +67,7 @@ def _fix_prefix(spec: CableSpec) -> None:
     # ── 2. 顺序修正 (N-ZC → ZCN 等) ──
     order_map = {
         'N-ZC': 'ZCN', 'N-ZB': 'ZBN', 'N-ZA': 'ZAN', 'N-ZD': 'ZDN',
-        'N-Z': 'ZCN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
+        'N-Z': 'ZN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
         'NH-ZC': 'ZCN', 'NH-ZB': 'ZBN', 'NH-ZA': 'ZAN',
         'ZN': 'ZCN', 'ZRNH': 'ZCN', 'NHZR': 'ZCN',
     }

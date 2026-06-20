@@ -70,7 +70,7 @@ BASE_MODELS = sorted(_BASE_MODELS_LIST, key=len, reverse=True)
 _BASE_SET = frozenset(_BASE_MODELS_LIST)
 
 # 预编译正则
-_V_VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK]?[vV])'
+_V_VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK][vV])'
 _CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
 _VOLTAGE_RE = re.compile(_V_VOLTAGE_PATTERN)
 _CORE_RE = re.compile(_CORE_PATTERN)
@@ -135,12 +135,10 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
                 r = rest.lstrip('-')
                 break
 
-    # Step 2: 提取 B1/B2 标志（支持 B1-/-B1-/B1 在型号前后）
-    if re.search(r'B1(?:-|$)', r) or r.startswith('B1'):
+    # Step 2: 提取 B1 标志
+    if '-B1-' in r or '-B1' in r:
         spec.b1 = True
-        r = re.sub(r'-?B1-?', '', r).strip('-')
-    elif re.search(r'B2(?:-|$)', r) or r.startswith('B2'):
-        spec.b2 = True
+        r = re.sub(r'-B1-?', '-', r)
         r = re.sub(r'-?B2-?', '', r).strip('-')
 
     # Step 3: 提取基础型号

@@ -23,6 +23,8 @@ from aggregator import aggregate, sort_key
 from validation import check_pe
 from excel_output import to_excel
 from model_interpreter import interpret_model
+from english_parser import parse_english_model
+from english_parser import parse_english_model
 
 
 def normalize(raw: str) -> str | None:
@@ -56,7 +58,16 @@ def normalize_with_log(raw: str) -> tuple[str | None, list[str]]:
 
 
 def _normalize_pipeline(raw: str, with_log: bool = False) -> str | None | tuple[str | None, list[str]]:
-    """新 pipeline：tokenizer → parser → normalizer"""
+    """新 pipeline：tokenizer → parser → normalizer，支持英文型号自动 fallback"""
+    # Step 0: Try English model parser first for CU/... format or Chinese prefixes
+    if (raw.strip().upper().startswith('CU/') or 
+        raw.strip().upper().startswith('AL/') or
+        '接地线' in raw or 
+        '接地裸铜线' in raw):
+        english_result = parse_english_model(raw)
+        if english_result:
+            raw = english_result
+    
     # Step 1: Tokenize
     result = tokenize(raw)
 

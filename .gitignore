@@ -1,4 +1,27 @@
-```
+# Python
 __pycache__/
 *.pyc
-```
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Dependencies
+.venv/
+venv/
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Tests
+.pytest_cache/
+.mypy_cache/

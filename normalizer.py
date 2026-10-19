@@ -14,11 +14,7 @@ normalizer.py — CableSpec AST → 标准化 CableSpec
 import re
 from typing import Optional
 from spec import CableSpec, CoreSpec
-
-
-# ── 辅助函数 ─────────────────────────────────────────────────────────
-
-SINGLE_CORE_WIRES = {'BYJ', 'BYJR', 'BVR', 'BV'}
+from cable_rules import SINGLE_CORE_WIRES
 
 VOLTAGE_MAP = [
     (['RYJSP', 'RYSP', 'RYJS', 'RVS'],    '300/300V'),
@@ -36,6 +32,9 @@ VOLTAGE_MAP = [
 ]
 
 RVSP_VOLTAGE = '300/300V'  # 须在RVS前匹配
+
+# 电压存在性检测（预编译）
+_HAS_VOLTAGE_RE = re.compile(r'\d+\.?\d*/\d+\.?\d*[kK]?V|(?<!/)\d+(?:\.\d+)?[kK]?V')
 
 
 # ── AST 级标准化 ─────────────────────────────────────────────────────
@@ -65,6 +64,8 @@ def _fix_prefix(spec: CableSpec) -> None:
         p = 'ZC'
 
     # ── 2. 顺序修正 (N-ZC → ZCN 等) ──
+    # 注意：'N-Z*' 键是前缀解析产物（如 'N-ZC'）；'ZN'/'ZRNH'/'NHZR' 等键
+    # 在当前 PREFIXES 表中不可达，保留仅作防御性映射。
     order_map = {
         'N-ZC': 'ZCN', 'N-ZB': 'ZBN', 'N-ZA': 'ZAN', 'N-ZD': 'ZDN',
         'N-Z': 'ZN', 'N-WDZC': 'WDZCN', 'N-WDZB': 'WDZBN', 'N-WDZA': 'WDZAN',
@@ -75,18 +76,12 @@ def _fix_prefix(spec: CableSpec) -> None:
         if p.startswith(wrong):
             p = right + p[len(wrong):]
             break
-    for wrong, right in order_map.items():
-        if p.startswith(wrong):
-            p = right + p[len(wrong):]
-            break
 
     # ── 3. 逆序修正 (DW → WD, DUW → WDU 等) ──
-    if p.startswith('DW'):
-        p = 'WD' + p[2:]
-    if p.startswith('DUW'):
-        p = 'WDU' + p[3:]
-    if p.startswith('UW'):
-        p = 'WU' + p[2:]
+    # 按长度降序判断，避免 'DUW' 被 'DW' 规则误改
+    for wrong, right in (('DUW', 'WDU'), ('DW', 'WD'), ('UW', 'WU')):
+        if p.startswith(wrong):
+            p = right + p[len(wrong):]
 
     # ── 4. WDZ (单根阻燃) 是合法型号，保留 ──
     # 之前 WRONG: if p == 'WDZ': spec.prefix = 'WDZC'
@@ -253,29 +248,29 @@ def fix_voltage(s: str, base: str) -> str:
     s = re.sub(r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?)[kK][vV]', r'\1kV', s)
 
     # 电压死锁补全（对已知型号）
-    has_voltage = bool(re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s))
+    has_voltage = bool(_HAS_VOLTAGE_RE.search(s))
 
     if not has_voltage:
         # RVSP 优先匹配
         if 'RVSP' in s and RVSP_VOLTAGE not in s:
-            s = re.sub(r'(RVSP)(-B[12])?-?(\\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
+            s = re.sub(r'(RVSP)(-B[12])?-?(\d)', rf'\1\2-{RVSP_VOLTAGE}-\3', s)
 
         for pats, volt in VOLTAGE_MAP:
             for pat in pats:
                 if pat in s and volt not in s:
                     # 支持-B1/-B2 等级在型号后
-                    s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-{volt}-\3', s)
+                    s = re.sub(rf'({pat})(-B[12])?-?(\d)', rf'\1\2-{volt}-\3', s)
                     break
 
         # YJV22/YJV/YJY 电压
         for pat in ['YJV22', 'YJV', 'YJY']:
-            if pat in s and not re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s):
-                s = re.sub(rf'({pat})(-B[12])?-?(\\d)', rf'\1\2-0.6/1kV-\3', s)
+            if pat in s and not _HAS_VOLTAGE_RE.search(s):
+                s = re.sub(rf'({pat})(-B[12])?-?(\d)', rf'\1\2-0.6/1kV-\3', s)
                 break
 
         # VV 单独处理
         if re.search(r'(?<![A-Z])VV(?![A-Z])', s) and 'YJV' not in s \
-           and not re.search(r'\d+\.?\d*/\d+\.?\d*[kK]?V|\d+[kK]?V', s):
+           and not _HAS_VOLTAGE_RE.search(s):
             s = re.sub(r'(\bVV|-VV)(-B[12])?-?(\d)', r'\1\2-0.6/1kV-\3', s)
 
     return s

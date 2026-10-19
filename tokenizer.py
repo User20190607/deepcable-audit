@@ -15,6 +15,14 @@ tokenizer.py — 原始字符串 → 初步 token
 
 import re
 from typing import Optional, NamedTuple
+from cable_rules import PREFIXES, MODEL_START_RE
+
+# 主型号提取正则（预编译）：prefix[-]base + 后续规格字符
+# MODEL_START_RE 的 base 带 (?![A-Z]) 前瞻，本身可以吃掉 KYJVP7X1.5 这类
+# "型号后直接粘数字"的写法；但原实现要求尾随 [\w...]+ 至少一个字符且不含
+# 前瞻协调，导致 'KYJVP7X1.5' 整体匹配失败。这里把尾部改为可重复的
+# 规格字符集（允许为空），确保只要前缀+基础型号成立就能提取整段。
+_MODEL_RE = re.compile(rf'({MODEL_START_RE}[0-9]*(?:[0-9]*[\w\s\*\.\+/×-]*)*)')
 
 
 class TokenResult(NamedTuple):
@@ -73,48 +81,7 @@ def detect_pv(raw: str) -> Optional[dict]:
 
 
 # ── 主型号提取 ───────────────────────────────────────────────────────
-
-# 所有支持的基础型号（按长度降序排列，避免短型号提前匹配）
-BASE_MODELS = sorted([
-    'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP', 'RVVSP',
-    'DJYPVRP', 'DJYVP',
-    'BYJR', 'BYJ', 'BVR', 'BV',
-    'RYJY', 'RYY', 'RVV', 'RVVP',
-    'BBTRZ', 'RTTYZ', 'RTTVZ', 'RTTZ', 'RZDJ', 'RZDF',
-    'BVV', 'KYJP', 'RYJ',
-], key=len, reverse=True)
-
-# 前缀（可选，按长度降序）
-PREFIXES = sorted([
-    # ── 无卤低烟低毒阻燃耐火 (WDUZ + grade + N/NJ/NS) ──
-    'WDUZDNJ', 'WDUZDNS', 'WDUZDN',
-    'WDUZCNJ', 'WDUZCNS', 'WDUZCN',
-    'WDUZBNJ', 'WDUZBNS', 'WDUZBN',
-    'WDUZANJ', 'WDUZANS', 'WDUZAN',
-    'WDUZNJ', 'WDUZNS', 'WDUZN',
-    # ── 无卤低烟低毒阻燃 (WDUZ + grade) ──
-    'WDUZD', 'WDUZC', 'WDUZB', 'WDUZA', 'WDUZ',
-    # ── 无卤低烟阻燃耐火 (WDZ + grade + N/NJ/NS) ──
-    'WDZDNJ', 'WDZDNS', 'WDZDN',
-    'WDZCNJ', 'WDZCNS', 'WDZCN',
-    'WDZBNJ', 'WDZBNS', 'WDZBN',
-    'WDZANJ', 'WDZANS', 'WDZAN',
-    'WDZNJ', 'WDZNS', 'WDZN',
-    # ── 无卤低烟阻燃 (WDZ + grade) ──
-    'WDZD', 'WDZC', 'WDZB', 'WDZA', 'WDZ',
-    # ── 含卤阻燃耐火 (Z[A~D] + N/NJ/NS) ──
-    'ZDNJ', 'ZDNS', 'ZDN',
-    'ZCNJ', 'ZCNS', 'ZCN',
-    'ZBNJ', 'ZBNS', 'ZBN',
-    'ZANJ', 'ZANS', 'ZAN',
-    # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
-    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
-    # ── 纯耐火 (含卤) ──
-    'NJ', 'NS', 'N',
-    # ── 废弃代号 ──
-    'NH',
-], key=len, reverse=True)
+# BASE_MODELS / PREFIXES 定义见 cable_rules.py（单一数据源）
 
 
 def tokenize(raw: str) -> TokenResult:
@@ -136,26 +103,18 @@ def tokenize(raw: str) -> TokenResult:
     if pv_result:
         return TokenResult(r, pv_result['color'], 'pv')
 
-    # 构建主型号提取正则
-    # 注意：- 必须在 prefix alternation 外层，不能绑在 N- 上
-    # 否则 WDZN-YJV 会被错误匹配为 N-YJV (跳过 WDZ 在位置3重匹配)
-    prefix_pattern = '|'.join(PREFIXES)
-    base_pattern = '|'.join(f'{b}(?![A-Z])' for b in BASE_MODELS)
-
-    # 找到第一个大写字母作为型号起点（跳过中文前缀如"电缆"）
-    start = re.search(r'[A-Z]', r)
+    # 提取主型号（正则已预编译，见 _MODEL_RE / cable_rules.MODEL_START_RE）
+    # 注意：'-' 在 prefix alternation 外层，不能绑在 'N-' 上，
+    # 否则 WDZN-YJV 会被错误匹配为 N-YJV（跳过 WDZ 后在位置 3 重匹配）
+    start = re.search(r'[A-Z]', r)  # 第一个大写字母 = 型号起点（跳过"电缆"等中文前缀）
     if start:
-        r_from_letter = r[start.start():]
-        m = re.match(
-            rf'((?:(?:{prefix_pattern})-)?'   # - 在外层，所有前缀统一要求
-            rf'(?:{base_pattern})'
-            r'[\w\s\*\.\+/×-]+)',
-            r_from_letter
-        )
-        if m:
-            cleaned = re.sub(r'\s+', '', m.group(1).strip())
-        else:
-            cleaned = re.sub(r'\s+', '', r)
+        body = r[start.start():]
+        m = _MODEL_RE.match(body)
+        # 匹配失败时保留从型号起点开始的完整字符串（交由 parser 兜底解析），
+        # 不能退回整串——否则中文前缀会混入 cleaned，导致 parser 前缀匹配失败、
+        # 进而丢失 NH/ZC 等燃烧特性前缀。
+        source = m.group(1).strip() if m else body
+        cleaned = re.sub(r'\s+', '', source)
     else:
         cleaned = re.sub(r'\s+', '', r)
 

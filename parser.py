@@ -14,66 +14,14 @@ parser.py — token → CableSpec AST
 import re
 from typing import Optional
 from spec import CableSpec, CoreSpec
-
-
-# ── 已知型号列表 ────────────────────────────────────────────────────
-# 预编译：按长度降序排列，避免短型号提前匹配
-
-_PREFIXES_LIST = [
-    # ── 含连字符的复合前缀（先匹配，更长）──
-    'NH-ZC', 'NH-ZB', 'NH-ZA',
-    'N-ZC', 'N-ZB', 'N-ZA', 'N-ZD', 'N-Z',
-    'N-WDZC', 'N-WDZB', 'N-WDZA',
-    # ── 无卤低烟低毒阻燃耐火 (WDUZ + grade + N/NJ/NS) ──
-    'WDUZDNJ', 'WDUZDNS', 'WDUZDN',
-    'WDUZCNJ', 'WDUZCNS', 'WDUZCN',
-    'WDUZBNJ', 'WDUZBNS', 'WDUZBN',
-    'WDUZANJ', 'WDUZANS', 'WDUZAN',
-    'WDUZNJ', 'WDUZNS', 'WDUZN',
-    # ── 无卤低烟低毒阻燃 (WDUZ + grade) ──
-    'WDUZD', 'WDUZC', 'WDUZB', 'WDUZA', 'WDUZ',
-    # ── 无卤低烟阻燃耐火 (WDZ + grade + N/NJ/NS) ──
-    'WDZDNJ', 'WDZDNS', 'WDZDN',
-    'WDZCNJ', 'WDZCNS', 'WDZCN',
-    'WDZBNJ', 'WDZBNS', 'WDZBN',
-    'WDZANJ', 'WDZANS', 'WDZAN',
-    'WDZNJ', 'WDZNS', 'WDZN',
-    # ── 无卤低烟阻燃 (WDZ + grade) ──
-    'WDZD', 'WDZC', 'WDZB', 'WDZA', 'WDZ',
-    # ── 含卤阻燃耐火 (Z[A~D] + N/NJ/NS) ──
-    'ZDNJ', 'ZDNS', 'ZDN',
-    'ZCNJ', 'ZCNS', 'ZCN',
-    'ZBNJ', 'ZBNS', 'ZBN',
-    'ZANJ', 'ZANS', 'ZAN',
-    # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
-    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
-    # ── 纯耐火 (含卤) ──
-    'NJ', 'NS', 'N',
-    # ── 废弃代号 ──
-    'NH',
-]
-PREFIXES = sorted(_PREFIXES_LIST, key=len, reverse=True)
-_PREFIXES_SET = frozenset(PREFIXES)
-
-_BASE_MODELS_LIST = [
-    'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP',
-    'DJYPVRP', 'DJYVP',
-    'BYJR', 'BYJ', 'BVR', 'BV',
-    'RYJY', 'RYY', 'RVV', 'RVVP',
-    'BBTRZ', 'RTTYZ', 'RTTVZ', 'RTTZ', 'RZDJ', 'RZDF',
-    'BVV', 'KYJP', 'RYJ',
-]
-BASE_MODELS = sorted(_BASE_MODELS_LIST, key=len, reverse=True)
-
-# 用于检查 rest 是否以已知 base 开头（支持无短横前缀）
-_BASE_SET = frozenset(_BASE_MODELS_LIST)
+from cable_rules import PREFIXES, BASE_MODELS, BASE_MODELS_SET as _BASE_SET
 
 # 预编译正则
 _V_VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK][vV])'
 _CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
 _VOLTAGE_RE = re.compile(_V_VOLTAGE_PATTERN)
 _CORE_RE = re.compile(_CORE_PATTERN)
+_ANY_BASE_RE = re.compile('(' + '|'.join(BASE_MODELS) + ')')
 
 
 # ── 格式统一 ─────────────────────────────────────────────────────────
@@ -121,8 +69,8 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
             spec.cores = [CoreSpec(1, float(m.group(1)))]
         return spec
 
-    # Step 1: 提取前缀
-    for prefix in sorted(PREFIXES, key=len, reverse=True):
+    # Step 1: 提取前缀（PREFIXES 已按长度降序）
+    for prefix in PREFIXES:
         if r.startswith(prefix):
             rest = r[len(prefix):]
             # 接受三种情况：
@@ -143,7 +91,7 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
 
     # Step 3: 提取基础型号
     found_base = False
-    for base in sorted(BASE_MODELS, key=len, reverse=True):
+    for base in BASE_MODELS:  # 已按长度降序
         if r.startswith(base):
             spec.base = base
             r = r[len(base):].lstrip('-')
@@ -151,9 +99,8 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
             break
 
     if not found_base:
-        # 尝试用正则查找
-        base_pat = '|'.join(sorted(BASE_MODELS, key=len, reverse=True))
-        m = re.search(rf'({base_pat})', r)
+        # 尝试用正则查找（预编译）
+        m = _ANY_BASE_RE.search(r)
         if m:
             spec.base = m.group(1)
             r = r[m.end():].lstrip('-')

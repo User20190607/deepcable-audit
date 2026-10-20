@@ -30,11 +30,14 @@ class CableSpec:
     voltage: str = ''               # 额定电压，如 0.6/1kV, 450/750V
     cores: list[CoreSpec] = field(default_factory=list)  # 芯线列表
     color: str = ''                 # 颜色后缀，如 红, 蓝
-    b1: bool = False                # B1 级难燃标志 (GB 31247)
-    b2: bool = False                # B2 级阻燃标志 (GB 31247)
+    b1: bool = False                # B1 级阻燃标志
+    b2: bool = False                # B2 级阻燃标志
     is_pv: bool = False             # 光伏电缆 PV1-F
     is_guess: bool = False          # True = 有字段是推断补全的，非原始数据
-    patch_log: list[str] = field(default_factory=list)  # 变更日志，如 '[P1] NH→N', '[P3] YJV→YJY'
+    recognized_base: bool = False   # 基础型号是否来自受支持的型号表
+    unparsed: str = ''              # 解析后剩余的原文片段，非空时需人工复核
+    inferred_fields: list[str] = field(default_factory=list)
+    patch_log: list[str] = field(default_factory=list)  # 变更日志，如 ['[P1] NH→N', '[P3] YJV→YJY']
 
     def to_string(self) -> str:
         """序列化为标准型号字符串"""

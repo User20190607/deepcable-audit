@@ -14,66 +14,11 @@ parser.py — token → CableSpec AST
 import re
 from typing import Optional
 from spec import CableSpec, CoreSpec
+from cable_rules import PREFIXES, BASE_MODELS
 
 
-# ── 已知型号列表 ────────────────────────────────────────────────────
-# 预编译：按长度降序排列，避免短型号提前匹配
-
-_PREFIXES_LIST = [
-    # ── 含连字符的复合前缀（先匹配，更长）──
-    'NH-ZC', 'NH-ZB', 'NH-ZA',
-    'N-ZC', 'N-ZB', 'N-ZA', 'N-ZD', 'N-Z',
-    'N-WDZC', 'N-WDZB', 'N-WDZA',
-    # ── 无卤低烟低毒阻燃耐火 (WDUZ + grade + N/NJ/NS) ──
-    'WDUZDNJ', 'WDUZDNS', 'WDUZDN',
-    'WDUZCNJ', 'WDUZCNS', 'WDUZCN',
-    'WDUZBNJ', 'WDUZBNS', 'WDUZBN',
-    'WDUZANJ', 'WDUZANS', 'WDUZAN',
-    'WDUZNJ', 'WDUZNS', 'WDUZN',
-    # ── 无卤低烟低毒阻燃 (WDUZ + grade) ──
-    'WDUZD', 'WDUZC', 'WDUZB', 'WDUZA', 'WDUZ',
-    # ── 无卤低烟阻燃耐火 (WDZ + grade + N/NJ/NS) ──
-    'WDZDNJ', 'WDZDNS', 'WDZDN',
-    'WDZCNJ', 'WDZCNS', 'WDZCN',
-    'WDZBNJ', 'WDZBNS', 'WDZBN',
-    'WDZANJ', 'WDZANS', 'WDZAN',
-    'WDZNJ', 'WDZNS', 'WDZN',
-    # ── 无卤低烟阻燃 (WDZ + grade) ──
-    'WDZD', 'WDZC', 'WDZB', 'WDZA', 'WDZ',
-    # ── 含卤阻燃耐火 (Z[A~D] + N/NJ/NS) ──
-    'ZDNJ', 'ZDNS', 'ZDN',
-    'ZCNJ', 'ZCNS', 'ZCN',
-    'ZBNJ', 'ZBNS', 'ZBN',
-    'ZANJ', 'ZANS', 'ZAN',
-    # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
-    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
-    # ── 纯耐火 (含卤) ──
-    'NJ', 'NS', 'N',
-    # ── 废弃代号 ──
-    'NH',
-]
-PREFIXES = sorted(_PREFIXES_LIST, key=len, reverse=True)
-_PREFIXES_SET = frozenset(PREFIXES)
-
-_BASE_MODELS_LIST = [
-    'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP',
-    'DJYPVRP', 'DJYVP',
-    'BYJR', 'BYJ', 'BVR', 'BV',
-    'RYJY', 'RYY', 'RVV', 'RVVP',
-    'BBTRZ', 'RTTYZ', 'RTTVZ', 'RTTZ', 'RZDJ', 'RZDF',
-    'BVV', 'KYJP', 'RYJ',
-]
-BASE_MODELS = sorted(_BASE_MODELS_LIST, key=len, reverse=True)
-
-# 用于检查 rest 是否以已知 base 开头（支持无短横前缀）
-_BASE_SET = frozenset(_BASE_MODELS_LIST)
-
-# 预编译正则
-_V_VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK][vV])'
-_CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
-_VOLTAGE_RE = re.compile(_V_VOLTAGE_PATTERN)
-_CORE_RE = re.compile(_CORE_PATTERN)
+VOLTAGE_PATTERN = r'(\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)?[kK]?V)'
+CORE_PATTERN = r'(\d+)[xX×*](\d+(?:\.\d+)?)'
 
 
 # ── 格式统一 ─────────────────────────────────────────────────────────
@@ -115,6 +60,7 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
     # PV1-F 用特殊路径
     if is_pv:
         spec.base = 'PV1-F'
+        spec.recognized_base = True
         spec.voltage = 'DC1500V'
         m = re.search(r'1×(\d+(?:\.\d+)?)', r)
         if m:
@@ -122,7 +68,7 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
         return spec
 
     # Step 1: 提取前缀
-    for prefix in sorted(PREFIXES, key=len, reverse=True):
+    for prefix in PREFIXES:
         if r.startswith(prefix):
             rest = r[len(prefix):]
             # 接受三种情况：
@@ -135,44 +81,55 @@ def parse(model_str: str, color: str = '', is_pv: bool = False) -> Optional[Cabl
                 r = rest.lstrip('-')
                 break
 
-    # Step 2: 提取 B1 标志
-    if '-B1-' in r or '-B1' in r:
-        spec.b1 = True
-        r = re.sub(r'-B1-?', '-', r)
-        r = re.sub(r'-?B2-?', '', r).strip('-')
+    # Step 2: 提取 B1/B2 标志，兼容前缀后或基础型号后的写法。
+    grade = re.search(r'(^|-)B([12])(?=-|$)', r)
+    if grade:
+        spec.b1 = grade.group(2) == '1'
+        spec.b2 = grade.group(2) == '2'
+        r = re.sub(r'(^|-)B[12](?=-|$)', '-', r, count=1).strip('-')
 
     # Step 3: 提取基础型号
     found_base = False
-    for base in sorted(BASE_MODELS, key=len, reverse=True):
+    for base in BASE_MODELS:
         if r.startswith(base):
             spec.base = base
+            spec.recognized_base = True
             r = r[len(base):].lstrip('-')
             found_base = True
             break
 
     if not found_base:
-        # 尝试用正则查找
-        base_pat = '|'.join(sorted(BASE_MODELS, key=len, reverse=True))
-        m = re.search(rf'({base_pat})', r)
+        # 未知型号只读取开头连续字母，禁止在字符串中间“捞”出一个已知型号。
+        # 例如 KYJVP 不能因为内部含 YJV 就被误判为 YJV。
+        m = re.match(r'([A-Z]+)', r)
         if m:
             spec.base = m.group(1)
             r = r[m.end():].lstrip('-')
         else:
-            # 实在找不到，整个当 base 吧
-            spec.base = r
+            spec.unparsed = r
             return spec
 
     # Step 4: 提取电压
-    vm = _VOLTAGE_RE.search(r)
+    vm = re.search(VOLTAGE_PATTERN, r)
     if vm:
         spec.voltage = vm.group(1)
         r = r[:vm.start()] + r[vm.end():]
         r = r.strip('-')
 
     # Step 5: 提取芯线
+    bare_section = bool(re.fullmatch(r'\d+(?:\.\d+)?', r.strip().strip('-')))
     cores = _parse_cores(r)
     if cores:
         spec.cores = cores
+        if bare_section:
+            spec.is_guess = True
+            spec.inferred_fields.append('core_count')
+            spec.patch_log.append('[P0] 补全芯数 1×')
+
+    remainder = '' if bare_section else re.sub(CORE_PATTERN, '', r)
+    remainder = re.sub(r'[-+\s]', '', remainder)
+    if remainder:
+        spec.unparsed = remainder
 
     return spec
 
@@ -187,7 +144,7 @@ def _parse_cores(s: str) -> list[CoreSpec]:
     parts = re.split(r'\s*\+\s*', s)
     result = []
     for part in parts:
-        m = _CORE_RE.search(part)
+        m = re.search(CORE_PATTERN, part)
         if m:
             result.append(CoreSpec(int(m.group(1)), float(m.group(2))))
         # 裸数字 → 单芯线：BV2.5 → 1×2.5

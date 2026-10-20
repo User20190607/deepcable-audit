@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from deepcable_read_excel import read_cable_list
-from deepcable_normalize import normalize, normalize_with_log
+from deepcable_normalize import normalize_detailed
 from validation import check_pe
 from model_interpreter import interpret_model_short
 from excel_output import build_output
@@ -189,13 +189,17 @@ def main():
             continue
 
         raw = r['raw']
-        model, patch_log = normalize_with_log(raw)
+        result = normalize_detailed(raw)
+        model = result.model
+        patch_log = result.changes
         pe_result = check_pe(model) if model else {'ok': True, 'warning': ''}
 
-        if model:
+        if result.ok and model:
             ctype, cdesc = _classify_change(patch_log, raw, model)
             pe_status = '✓ OK' if pe_result['ok'] else '⚠ ' + pe_result.get('warning', '')
-            status = '⚠️警告' if not pe_result['ok'] else ('✅正常')
+            status = '⚠️待复核' if result.status == 'inferred' else (
+                '⚠️警告' if not pe_result['ok'] else '✅正常'
+            )
 
             # Aggregate
             if model not in agg_map:
@@ -219,13 +223,14 @@ def main():
                     'suggestion': '确认是否接受当前截面或更换更大规格',
                 })
         else:
-            ctype, cdesc = '', '解析失败'
+            ctype = ''
+            cdesc = '; '.join(issue.message for issue in result.issues) or '解析失败'
             pe_status = '—'
-            status = '❌失败'
+            status = '⚠️待确认' if result.status == 'needs_review' else '❌失败'
             issues.append({
-                'type': '❌ 失败',
+                'type': '⚠️ 待确认' if result.status == 'needs_review' else '❌ 失败',
                 'raw_spec': raw,
-                'description': '无法识别型号',
+                'description': cdesc,
                 'suggestion': '请补充标准型号或修正写法',
             })
 

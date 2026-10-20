@@ -55,6 +55,29 @@ def validate_cable(spec: CableSpec) -> list[dict]:
     """对 CableSpec 执行全部校验，返回校验结果列表"""
     warnings = []
 
+    # Prefix structure checks. These report ambiguity; they never rewrite data.
+    if 'U' in spec.prefix and not spec.prefix.startswith('WDU'):
+        warnings.append({
+            'field': 'prefix',
+            'severity': 'error',
+            'message': f'低毒前缀必须包含 WDU，当前为 {spec.prefix}',
+        })
+    if spec.prefix.startswith('D'):
+        warnings.append({
+            'field': 'prefix',
+            'severity': 'error',
+            'message': f'低烟前缀 D 前必须有 W，当前为 {spec.prefix}',
+        })
+
+    if spec.base in {'RVS', 'RYJS'} and spec.cores:
+        total_cores = sum(core.count for core in spec.cores)
+        if total_cores != 2:
+            warnings.append({
+                'field': 'cores',
+                'severity': 'error',
+                'message': f'{spec.base} 应为2芯，当前为 {total_cores} 芯',
+            })
+
     # N/PE 校验
     pe_result = check_pe(spec.to_string())
     if not pe_result['ok']:

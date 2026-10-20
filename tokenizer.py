@@ -72,51 +72,6 @@ def detect_pv(raw: str) -> Optional[dict]:
     return None
 
 
-# ── 主型号提取 ───────────────────────────────────────────────────────
-
-# 所有支持的基础型号（按长度降序排列，避免短型号提前匹配）
-BASE_MODELS = sorted([
-    'YJV22', 'YJV', 'YJY', 'KYJYP', 'KYJY', 'KVV', 'KVVP',
-    'RYJSP', 'RYSP', 'RYJS', 'RYS', 'RVS', 'RVSP', 'RVVSP',
-    'DJYPVRP', 'DJYVP',
-    'BYJR', 'BYJ', 'BVR', 'BV',
-    'RYJY', 'RYY', 'RVV', 'RVVP',
-    'BBTRZ', 'RTTYZ', 'RTTVZ', 'RTTZ', 'RZDJ', 'RZDF',
-    'BVV', 'KYJP', 'RYJ',
-], key=len, reverse=True)
-
-# 前缀（可选，按长度降序）
-PREFIXES = sorted([
-    # ── 无卤低烟低毒阻燃耐火 (WDUZ + grade + N/NJ/NS) ──
-    'WDUZDNJ', 'WDUZDNS', 'WDUZDN',
-    'WDUZCNJ', 'WDUZCNS', 'WDUZCN',
-    'WDUZBNJ', 'WDUZBNS', 'WDUZBN',
-    'WDUZANJ', 'WDUZANS', 'WDUZAN',
-    'WDUZNJ', 'WDUZNS', 'WDUZN',
-    # ── 无卤低烟低毒阻燃 (WDUZ + grade) ──
-    'WDUZD', 'WDUZC', 'WDUZB', 'WDUZA', 'WDUZ',
-    # ── 无卤低烟阻燃耐火 (WDZ + grade + N/NJ/NS) ──
-    'WDZDNJ', 'WDZDNS', 'WDZDN',
-    'WDZCNJ', 'WDZCNS', 'WDZCN',
-    'WDZBNJ', 'WDZBNS', 'WDZBN',
-    'WDZANJ', 'WDZANS', 'WDZAN',
-    'WDZNJ', 'WDZNS', 'WDZN',
-    # ── 无卤低烟阻燃 (WDZ + grade) ──
-    'WDZD', 'WDZC', 'WDZB', 'WDZA', 'WDZ',
-    # ── 含卤阻燃耐火 (Z[A~D] + N/NJ/NS) ──
-    'ZDNJ', 'ZDNS', 'ZDN',
-    'ZCNJ', 'ZCNS', 'ZCN',
-    'ZBNJ', 'ZBNS', 'ZBN',
-    'ZANJ', 'ZANS', 'ZAN',
-    # ── 含卤阻燃 (Z[A~D]，单根 Z) ──
-    'ZD', 'ZC', 'ZB', 'ZA', 'ZR', 'Z',
-    # ── 纯耐火 (含卤) ──
-    'NJ', 'NS', 'N',
-    # ── 废弃代号 ──
-    'NH',
-], key=len, reverse=True)
-
-
 def tokenize(raw: str) -> TokenResult:
     """
     原始字符串 → TokenResult
@@ -136,26 +91,11 @@ def tokenize(raw: str) -> TokenResult:
     if pv_result:
         return TokenResult(r, pv_result['color'], 'pv')
 
-    # 构建主型号提取正则
-    # 注意：- 必须在 prefix alternation 外层，不能绑在 N- 上
-    # 否则 WDZN-YJV 会被错误匹配为 N-YJV (跳过 WDZ 在位置3重匹配)
-    prefix_pattern = '|'.join(PREFIXES)
-    base_pattern = '|'.join(f'{b}(?![A-Z])' for b in BASE_MODELS)
-
-    # 找到第一个大写字母作为型号起点（跳过中文前缀如"电缆"）
+    # Tokenizer 只负责确定型号文本的起点。前缀和基础型号由 parser 解析，
+    # 避免两层各维护一套规则，也避免这里提前截断未知型号。
     start = re.search(r'[A-Z]', r)
     if start:
-        r_from_letter = r[start.start():]
-        m = re.match(
-            rf'((?:(?:{prefix_pattern})-)?'   # - 在外层，所有前缀统一要求
-            rf'(?:{base_pattern})'
-            r'[\w\s\*\.\+/×-]+)',
-            r_from_letter
-        )
-        if m:
-            cleaned = re.sub(r'\s+', '', m.group(1).strip())
-        else:
-            cleaned = re.sub(r'\s+', '', r)
+        cleaned = re.sub(r'\s+', '', r[start.start():])
     else:
         cleaned = re.sub(r'\s+', '', r)
 

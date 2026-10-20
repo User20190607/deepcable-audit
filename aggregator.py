@@ -8,14 +8,8 @@ aggregator.py — 型号指纹聚合和排序
 """
 
 import re
-import math
 from collections import defaultdict
-from typing import Optional
-
-from spec import CableSpec, CoreSpec
-
-
-SINGLE_CORE_WIRES = {'BYJ', 'BYJR', 'BVR', 'BV'}
+from cable_rules import SINGLE_CORE_WIRES
 
 
 def aggregate(records: list[dict]) -> tuple[dict, list, list]:
@@ -26,17 +20,18 @@ def aggregate(records: list[dict]) -> tuple[dict, list, list]:
         failed:     [{'raw': ..., 'qty': ...}]
         index_log:  [{'seq': ..., 'raw': ..., 'model': ..., 'qty': ...}]
     """
-    from deepcable_normalize import normalize
+    from deepcable_normalize import normalize_detailed
 
     aggregated = defaultdict(float)
     failed = []
     index_log = []
 
     for i, r in enumerate(records, 1):
-        model = normalize(r['raw'])
+        result = normalize_detailed(r['raw'])
+        model = result.model
         qty = float(r['qty'])
 
-        if model:
+        if result.ok and model:
             # 单芯线拆分
             split_factor = _calc_split_factor(model)
             if split_factor > 1:
@@ -45,12 +40,17 @@ def aggregate(records: list[dict]) -> tuple[dict, list, list]:
             index_log.append({
                 'seq': i, 'raw': r['raw'],
                 'model': model, 'qty': qty * split_factor,
+                'status': result.status,
             })
         else:
-            failed.append(r)
+            failed.append({
+                **r,
+                'status': result.status,
+                'issues': [issue.message for issue in result.issues],
+            })
             index_log.append({
                 'seq': i, 'raw': r['raw'],
-                'model': None, 'qty': qty,
+                'model': model, 'qty': qty, 'status': result.status,
             })
 
     return dict(aggregated), failed, index_log

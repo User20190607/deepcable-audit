@@ -1,0 +1,550 @@
+{
+  "schema_version": "1.0",
+  "ruleset_version": "V30-RULESET-2026-11-24.2",
+  "provenance_types": [
+    "STANDARD_VERIFIED",
+    "USER_CONFIRMED",
+    "PROJECT_MAPPING",
+    "PROVISIONAL",
+    "BLOCKED"
+  ],
+  "voltage_profiles": [
+    {
+      "id": "VP-POWER-LV",
+      "description": "低压挤包绝缘电力电缆 (GB/T 12706.1)",
+      "products": [
+        "YJV",
+        "YJY",
+        "YJLV",
+        "YJLY",
+        "VV",
+        "VLV"
+      ],
+      "voltage": "0.6/1kV",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-MINERAL",
+      "description": "矿物绝缘防火电缆",
+      "products": [
+        "BTTZ",
+        "BTTRZ",
+        "BBTRZ",
+        "YTTWY",
+        "NG-A"
+      ],
+      "voltage": "0.6/1kV",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-CONTROL",
+      "description": "塑料绝缘控制电缆 (GB/T 9330)",
+      "products": [
+        "KVV",
+        "KVVP",
+        "KVVR",
+        "KVVRP",
+        "KYY",
+        "KYYP",
+        "KYJY",
+        "KYJYP"
+      ],
+      "voltage": "450/750V",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-WIRE-LE1",
+      "description": "单芯布电线 (截面<=1mm²)",
+      "products": [
+        "BV",
+        "BVR",
+        "BYJ",
+        "BYR",
+        "BYJR",
+        "BYJS",
+        "RV",
+        "RYJ"
+      ],
+      "max_section": "1",
+      "voltage": "300/500V",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-WIRE-GE15",
+      "description": "单芯布电线 (截面>=1.5mm²)",
+      "products": [
+        "BV",
+        "BVR",
+        "BYJ",
+        "BYR",
+        "BYJR",
+        "BYJS",
+        "RV",
+        "RYJ"
+      ],
+      "min_section": "1.5",
+      "voltage": "450/750V",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-FLEX-300-500",
+      "description": "通用轻型护套软线 (GB/T 5023 / JB/T 8734)",
+      "products": [
+        "BVV",
+        "BLVV",
+        "RVV",
+        "RYJY",
+        "RYY",
+        "JHS"
+      ],
+      "voltage": "300/500V",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    },
+    {
+      "id": "VP-PAIR-300-300",
+      "description": "对绞线及弱电屏蔽软电缆",
+      "products": [
+        "RVS",
+        "RYJS",
+        "RYS",
+        "RVSP",
+        "RYSP",
+        "RYJSP",
+        "RVVSP",
+        "RYYSP",
+        "RVVP",
+        "RYYP"
+      ],
+      "voltage": "300/300V",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global",
+      "status": "active"
+    }
+  ],
+  "aux_section_reference": {
+    "4": "2.5",
+    "6": "4",
+    "10": "6",
+    "16": "10",
+    "25": "16",
+    "35": "16",
+    "50": "25",
+    "70": "35",
+    "95": "50",
+    "120": "70",
+    "150": "70",
+    "185": "95",
+    "240": "120",
+    "300": "150"
+  },
+  "aux_section_profiles": [
+    {
+      "main": "4",
+      "allowed_aux": [
+        "2.5",
+        "4"
+      ]
+    },
+    {
+      "main": "6",
+      "allowed_aux": [
+        "4",
+        "6"
+      ]
+    },
+    {
+      "main": "10",
+      "allowed_aux": [
+        "6",
+        "10"
+      ]
+    },
+    {
+      "main": "16",
+      "allowed_aux": [
+        "10",
+        "16"
+      ]
+    },
+    {
+      "main": "25",
+      "allowed_aux": [
+        "16"
+      ]
+    },
+    {
+      "main": "35",
+      "allowed_aux": [
+        "16"
+      ]
+    },
+    {
+      "main": "50",
+      "allowed_aux": [
+        "25"
+      ]
+    },
+    {
+      "main": "70",
+      "allowed_aux": [
+        "35"
+      ]
+    },
+    {
+      "main": "95",
+      "allowed_aux": [
+        "50"
+      ]
+    },
+    {
+      "main": "120",
+      "allowed_aux": [
+        "70"
+      ]
+    },
+    {
+      "main": "150",
+      "allowed_aux": [
+        "70"
+      ]
+    },
+    {
+      "main": "185",
+      "allowed_aux": [
+        "95"
+      ]
+    },
+    {
+      "main": "240",
+      "allowed_aux": [
+        "120"
+      ]
+    },
+    {
+      "main": "300",
+      "allowed_aux": [
+        "150"
+      ]
+    }
+  ],
+  "prefix_normalization_rules": [
+    {
+      "id": "PREF-NORM-LOW-VOLTAGE-FLAME",
+      "description": "低压阻燃前缀规范化：ZR/ZRC统一为ZC，ZRA->ZA，ZRB->ZB",
+      "mappings": {
+        "ZR": "ZC",
+        "ZRC": "ZC",
+        "ZRB": "ZB",
+        "ZRA": "ZA"
+      },
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "PREF-NORM-FIRE-RESIST",
+      "description": "耐火及阻燃耐火前缀规范化",
+      "mappings": {
+        "ZRNH": "ZCN",
+        "NH": "N",
+        "ZN": "ZCN"
+      },
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "PREF-PRESERVE-POLICIES",
+      "description": "前缀保护红线策略",
+      "rules": [
+        "WDZN保留，禁止自动变WDZBN",
+        "WDU保留DU，禁止丢失DU",
+        "WDZC与WDZB严格区分管理",
+        "WDZ-BYJ与WDZB-BYJ严格区分管理",
+        "裸型号禁止自动增补阻燃或耐火前缀",
+        "中压ZRC默认保留，不强制规范为ZC"
+      ],
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    }
+  ],
+  "material_conflicts": [
+    {
+      "id": "MAT-W-FORBIDS-V",
+      "condition": "WDZ/WDU/WD prefix + PVC product family (V/VV/YJV/KVV/RVV)",
+      "action": "HOLD_UNLESS_EXACT_AUTHORIZED_MAPPING",
+      "description": "低烟无卤(WD)体系与聚氯乙烯(PVC)存在根本性材料互斥，禁止直接采购下单",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    }
+  ],
+  "conversion_candidate_matrix": [
+    {
+      "id": "CAND-WD-YJV-TO-YJY",
+      "source_pattern": "WD*-YJV*",
+      "target_candidate": "对应前缀下YJY",
+      "armor_sheath_rule": "22/32/42 -> 23/33/43 (如 WDZAN-YJY22 更正为 WDZAN-YJY23)",
+      "action": "AUTO_CORRECT_EXACT",
+      "conditions": "唯一完整结构等效映射，保留原前缀、导体、截面及电压",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-WD-VV-TO-YJY",
+      "source_pattern": "WD*-VV*",
+      "target_candidate": "对应前缀下YJY",
+      "action": "AUTO_CORRECT_EXACT",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-WD-YJLV-TO-YJLY",
+      "source_pattern": "WD*-YJLV*",
+      "target_candidate": "对应前缀下YJLY",
+      "action": "AUTO_CORRECT_EXACT",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-KVV-MULTI",
+      "source_pattern": "KVV",
+      "candidates": [
+        "KYY",
+        "KYJY"
+      ],
+      "action": "HOLD_MULTI_CANDIDATE",
+      "description": "KVV绝缘材料转换存在聚乙烯(KYY)与交联聚乙烯(KYJY)多个目标，禁止静默替用户选择",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-KVVP-MULTI",
+      "source_pattern": "KVVP",
+      "candidates": [
+        "KYYP",
+        "KYJYP"
+      ],
+      "action": "HOLD_MULTI_CANDIDATE",
+      "description": "编织屏蔽控制电缆无卤转换多目标",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-RVVP-MULTI",
+      "source_pattern": "RVVP",
+      "candidates": [
+        "RYYP",
+        "RYJYP"
+      ],
+      "action": "HOLD_MULTI_CANDIDATE",
+      "description": "编织屏蔽软电缆无卤转换多目标，保留编织屏蔽，禁止擅自变更为对绞",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-RVVP1-PROVISIONAL",
+      "source_pattern": "RVVP1",
+      "candidates": [
+        "RYYP1",
+        "RYJYP1"
+      ],
+      "action": "PROVISIONAL_CANDIDATE",
+      "description": "缠绕屏蔽软电缆，不得误按编织屏蔽(P)处理",
+      "source_type": "PROVISIONAL",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-RVS-TO-RYS-RYJS",
+      "source_pattern": "RVS",
+      "candidates": [
+        "RYS",
+        "RYJS"
+      ],
+      "action": "HOLD_MULTI_CANDIDATE",
+      "description": "两芯对绞软线必须保持2×S结构，按项目要求或证据选择材料体系",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-SINGLE-RV-FORBID-PAIR",
+      "source_pattern": "RV",
+      "forbidden_target": "RYJS",
+      "action": "BLOCKED",
+      "description": "单芯软电线(RV)严禁自动转成两芯对绞线(RYJS)",
+      "source_type": "BLOCKED",
+      "scope": "global"
+    },
+    {
+      "id": "CAND-BTTRZ-TO-YTTWY",
+      "source_pattern": "BTTRZ",
+      "target_candidate": "YTTWY",
+      "action": "USER_CONFIRMED_REPLACE",
+      "description": "柔性矿物电缆BTTRZ替换为YTTWY；BTTZ、BBTRZ各自保留",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    }
+  ],
+  "structure_rules": [
+    {
+      "id": "STRUCT-TWIST-PAIR",
+      "description": "对绞结构严格书写为 n×2×S；不把RVVP当对绞",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "STRUCT-SINGLE-CORE-NO-SPLIT",
+      "description": "多芯写法出现在单芯布电线上(如BV 3×2.5)，禁止自行拆成单芯并乘量，仅明确'拆单缆'后换算",
+      "source_type": "USER_CONFIRMED",
+      "scope": "global"
+    },
+    {
+      "id": "STRUCT-AC-SINGLE-FERROMAGNETIC-ARMOR",
+      "description": "单芯交流电缆严禁使用闭合铁磁性钢带铠装(如22铠装)，会产生涡流发热，触发高危阻断",
+      "action": "BLOCK",
+      "source_type": "STANDARD_VERIFIED",
+      "clauses": [
+        "GB 50217-2018 5.1.4"
+      ],
+      "scope": "global"
+    }
+  ],
+  "project_mappings_registry": [
+    {
+      "mapping_id": "PM-001",
+      "source_model": "WDZBN-B1-RV-2×1.5",
+      "target_model": "WDZBN-RYJS-B1-300/300V 2×1.5",
+      "status": "SUSPENDED_AWAITING_BINDING",
+      "scope": "project_bound_only",
+      "source_type": "PROJECT_MAPPING",
+      "note": "仅在用户明确绑定适用项目/批次后方可激活使用"
+    },
+    {
+      "mapping_id": "PM-002",
+      "source_model": "WDZBN-RV-2×1.5",
+      "target_model": "WDZBN-RYJS-300/300V 2×1.5",
+      "status": "SUSPENDED_AWAITING_BINDING",
+      "scope": "project_bound_only",
+      "source_type": "PROJECT_MAPPING",
+      "note": "仅在用户明确绑定适用项目/批次后方可激活使用"
+    },
+    {
+      "mapping_id": "PM-003",
+      "source_model": "WDZBN-B1-RVV-2×1.5",
+      "target_model": "WDZBN-RYJY-B1-300/500V 2×1.5",
+      "status": "SUSPENDED_AWAITING_BINDING",
+      "scope": "project_bound_only",
+      "source_type": "PROJECT_MAPPING",
+      "note": "仅在用户明确绑定适用项目/批次后方可激活使用"
+    },
+    {
+      "mapping_id": "PM-004",
+      "source_model": "WDZBN-B1-RVV-4×1.5",
+      "target_model": "WDZBN-RYJY-B1-300/500V 4×1.5",
+      "status": "SUSPENDED_AWAITING_BINDING",
+      "scope": "project_bound_only",
+      "source_type": "PROJECT_MAPPING",
+      "note": "仅在用户明确绑定适用项目/批次后方可激活使用"
+    },
+    {
+      "mapping_id": "PM-005",
+      "source_model": "WDZCN-B1-RV-2×1.5",
+      "target_model": "WDZCN-RYJS-B1-300/300V 2×1.5",
+      "status": "SUSPENDED_AWAITING_BINDING",
+      "scope": "project_bound_only",
+      "source_type": "PROJECT_MAPPING",
+      "note": "仅在用户明确绑定适用项目/批次后方可激活使用"
+    }
+  ],
+  "conversion_policy": {
+    "exact_match_only": true,
+    "fuzzy_conversion": false,
+    "requires_authorization_ref": true,
+    "default_scope": "current-batch"
+  },
+  "standards_registry": [
+    {
+      "standard_id": "GB/T 12706.1-2020",
+      "title": "额定电压1kV(Um=1.2kV)到35kV(Um=40.5kV)挤包绝缘电力电缆及附件 第1部分:额定电压1kV(Um=1.2kV)和3kV(Um=3.6kV)电缆",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2020",
+      "clauses": [
+        "表1 导体规格",
+        "表5 绝缘厚度",
+        "第14条 试验条件"
+      ],
+      "note": "低压电力电缆权威标准"
+    },
+    {
+      "standard_id": "GB/T 9330-2020",
+      "title": "塑料绝缘控制电缆",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2020",
+      "clauses": [
+        "表1 结构尺寸",
+        "表2 标称型号"
+      ],
+      "note": "KYY未直接列名于表2，采用时须有企标或技术协议"
+    },
+    {
+      "standard_id": "GB/T 5023.3-2008",
+      "title": "额定电压450/750V及以下聚氯乙烯绝缘电缆 第3部分:固定布线用无护套电缆",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2008",
+      "clauses": [
+        "第2章 BV/BVR型号规范"
+      ],
+      "note": "固定布线用电线电缆基础标准"
+    },
+    {
+      "standard_id": "GB/T 19666-2019",
+      "title": "阻燃和耐火电线电缆或光纤通则",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2019",
+      "clauses": [
+        "表1 阻燃分级(ZA/ZB/ZC/ZD)",
+        "表2 耐火性能要求"
+      ],
+      "note": "阻燃耐火前缀及性能权威分级依据"
+    },
+    {
+      "standard_id": "GB 31247-2014",
+      "title": "电缆及光缆燃烧性能分级",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2014",
+      "clauses": [
+        "第4章 燃烧性能等级(B1/B2)",
+        "第5章 附加信息(s,d,t)"
+      ],
+      "note": "工程防火B1/B2强制分级标准，ZA/ZB/ZC不能推导出B1"
+    },
+    {
+      "standard_id": "GB 50217-2018",
+      "title": "电力工程电缆设计标准",
+      "status": "STANDARD_VERIFIED",
+      "edition": "2018",
+      "clauses": [
+        "5.1.4 交流单芯电缆非磁性铠装要求"
+      ],
+      "note": "工程敷设红线设计标准"
+    }
+  ],
+  "packaging": {
+    "bale_length_m": "100",
+    "source_type": "USER_CONFIRMED",
+    "scope": "global"
+  },
+  "notes": [
+    "本规则库为 V30-RULESET-2026-11-24.2 增强版，已结构化融合 V29.1 第3节及第12.1节全部核心规范。",
+    "严格遵从三态分离：技术符合性、用户授权、标准证据独立验证。"
+  ]
+}

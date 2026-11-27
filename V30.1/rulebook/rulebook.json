@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.1",
+  "ruleset_version": "V30.1-RULESET-2026-11-27.1",
+  "status": "candidate",
+  "principles": [
+    "Raw source rows are immutable and retained.",
+    "Production loss is remark-only and never changes purchase quantity.",
+    "N, PE and PEN roles are not inferred from core count or section ratio.",
+    "No conductor compliance PASS without approved standards profile and exact clause evidence.",
+    "Package conversion requires explicit confirmed package length.",
+    "Power-cable voltage is not blindly defaulted when absent.",
+    "Armor suffixes 22 and 23 are preserved; no implicit substitution.",
+    "Patch operations rerun parsing and validation.",
+    "Release Gate recomputes quantity from raw source rows independently.",
+    "Sorting mode is explicit: source order or model order."
+  ],
+  "defaults": {
+    "production_loss_in_purchase_quantity": false,
+    "silent_fractional_metre_rounding": false,
+    "infer_conductor_role_from_core_count": false,
+    "infer_package_length": false,
+    "blind_power_voltage_default": false,
+    "auto_convert_armor_22_to_23": false
+  },
+  "confirmed_product_voltage_defaults": {
+    "BVV": "300/500V",
+    "RVV": "300/500V",
+    "RVVP": "300/300V",
+    "RVS": "300/300V",
+    "RYJS": "300/300V",
+    "BVR": "450/750V",
+    "BV": "450/750V",
+    "BYJ": "450/750V"
+  },
+  "conductor_profiles": {},
+  "conductor_profiles_note": "Intentionally empty until each N/PE/PEN rule is reviewed against a current authoritative standard, exact clause, material and installation conditions. Empty profiles cause BLOCKED, not PASS."
+}

@@ -43,6 +43,6 @@ class V301Tests(unittest.TestCase):
         self.assertEqual(x["release_gate"]["status"],"RELEASED")
     def test_tsv5(self):
         x=run_pipeline({"rows":[{"row_id":"a","model":"BVV-300/500V 1×35","unit":"m","quantity":"38"}]})
-        self.assertEqual(len(x["tsv5"].split("\\t")),5)
+        self.assertEqual(len(x["tsv5"].split("\t")),5)
 
 if __name__=="__main__": unittest.main(verbosity=2)

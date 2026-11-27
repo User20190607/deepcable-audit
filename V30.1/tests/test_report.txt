@@ -1,0 +1,15 @@
+V30.1.0 candidate test report
+Environment: Python 3.13.0; standard library only
+Unit tests: 17 passed, 0 failed
+Smoke CLI: exit code 0
+Smoke Release Gate: RELEASED
+Smoke batch: 3 source rows, 2 aggregate rows
+Source totals: 142 m
+Aggregated totals: 142 m
+
+Limitations:
+- This is not production certification.
+- September historical replay has not been run against V30.1.
+- Full V28.5/V29.1 mapping parity is not complete.
+- N/PE/PEN numeric profiles intentionally remain empty pending authoritative standards review.
+- Conductor role must be explicitly supplied; compound-section power cable without roles is HOLD.

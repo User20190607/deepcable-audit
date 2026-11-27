@@ -1,0 +1,9 @@
+{
+  "batch_id": "V30.1-SMOKE-001",
+  "sort_mode": "model",
+  "rows": [
+    {"row_id":"A1","model":"BVV-300/500V 1×35","unit":"m","quantity":"38","color":"黄","production_loss_m":"4"},
+    {"row_id":"A2","model":"BVV-300/500V 1×35","unit":"m","quantity":"38","color":"绿","production_loss_m":"4"},
+    {"row_id":"B1","model":"ZB-YJV22-8.7/15kV 3×300","unit":"m","quantity":"66"}
+  ]
+}

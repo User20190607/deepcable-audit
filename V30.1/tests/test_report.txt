@@ -1,6 +1,6 @@
 V30.1.0 candidate test report
 Environment: Python 3.13.0; standard library only
-Unit tests: 17 passed, 0 failed
+Unit tests in the uploaded regression file: 13 test methods; local candidate suite: 17 passed, 0 failed
 Smoke CLI: exit code 0
 Smoke Release Gate: RELEASED
 Smoke batch: 3 source rows, 2 aggregate rows

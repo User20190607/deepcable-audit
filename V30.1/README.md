@@ -33,4 +33,8 @@ The archived baseline remains immutable during V30.1 work. New implementation mu
 
 ## Current status
 
-This commit establishes the isolated workspace and migration contract only. It does not claim that the planned modules are implemented or that tests have passed.
+- P0-A Rule Registry: implemented; structural and dependency checks are covered by nine unit tests.
+- GitHub Actions: Python compile and registry unit-test job completed successfully.
+- P0-B cable-domain regression corpus: planned, not yet complete.
+- Legacy beta2 rulebook migration: pending review; archived source remains unchanged.
+- V30.1 is still an upgrade-in-progress, not production-ready.

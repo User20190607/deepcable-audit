@@ -29,3 +29,11 @@ Historical assistant output is not automatically ground truth. Prefer explicit u
 - project mapping activation authorization
 
 These are themes only; no expected result is asserted until each case is reviewed.
+
+## Executable baseline characterization
+
+- Frozen beta2 source: `v30core/compat/beta2_engine_snapshot.py`
+- Case manifest: `cases/beta2-known-findings.jsonl`
+- Tests: `test_beta2_baseline.py`
+
+These tests characterize archived beta2 behaviour. A passing defect-characterization test means the known defect was reproduced, not that it is acceptable. See `../../docs/P0-B_REGRESSION_EVAL_REPORT.md`.

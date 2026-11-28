@@ -1,5 +1,5 @@
 {
-  "dataset_version": "V30.1-GOLDEN-0.1",
+  "dataset_version": "V30.1-GOLDEN-0.2",
   "created_at": "2026-11-28",
   "sources": [
     {
@@ -66,6 +66,24 @@
       "adjudication_status": "NEEDS_CONTEXT",
       "golden_scoring": "excluded_pending_voltage_profile_and_aggregation_adjudication",
       "privacy_note": "Raw image and row-level content are retained locally; only hash and aggregate metadata are committed to this public repository."
+    },
+    {
+      "source_id": "SRC-IMG-20261128-001",
+      "file_name": "image(20261128-082249).png",
+      "sha256": "da948ca3dfabe67ec3be9abc36f2aff95cf6535d7a62d3bc1eed2c2bbb38c81d",
+      "dimensions_px": [
+        374,
+        857
+      ],
+      "source_rows": 17,
+      "adjudicated_case_id": "GOLD-IMG-20261128-001",
+      "status": "user_adjudicated",
+      "decision_scope": "this image case only",
+      "decisions": [
+        "ZC-YJV voltage 0.6/1kV",
+        "ZR-BVR-450/750V 1×cross-section",
+        "1 roll = 100m"
+      ]
     }
   ],
   "policy": {

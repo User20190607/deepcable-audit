@@ -1,0 +1,29 @@
+name: V30.1 Regression
+
+on:
+  push:
+    branches: ["v30.1"]
+    paths:
+      - "V30.1/**"
+      - ".github/workflows/v30.1-regression.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "V30.1/**"
+      - ".github/workflows/v30.1-regression.yml"
+  workflow_dispatch:
+
+jobs:
+  registry-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile V30.1 Python
+        run: python -m compileall -q V30.1
+      - name: Run rule registry tests
+        env:
+          PYTHONPATH: V30.1
+        run: python -m unittest discover -s V30.1/tests/unit -p "test_*.py" -v

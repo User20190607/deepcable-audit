@@ -8,6 +8,7 @@
 | User messages | 379 | Parsed user-role messages |
 | Assistant messages | 408 | Parsed assistant-role messages |
 | Cable-related user candidates | 158 | Lexical candidate extraction only |
+| High-priority correction candidates | 38 | Contains correction/authorization/confirmation language; still unreviewed |
 | Adjudicated golden cases | 0 initially | Do not score until each case is reviewed |
 | October candidates | 0 | Exact audit source not retrieved |
 
@@ -30,7 +31,11 @@ The lexical filter is intentionally high-recall and may include false positives.
 
 ## Adjudicated examples
 
-The initial explicit-correction cases in `cases/adjudicated/explicit-user-corrections.jsonl` are narrowly scoped to direct user statements. They are not full-batch gold outputs. Each case references both the original source message and the correction message. Any missing target-row context remains marked `NEEDS_CONTEXT`.
+No source-derived cases have yet been promoted to `ADJUDICATED`. Explicit correction candidates are queued for human review in the local-only workbook. Each must be linked to its original source row and decision context before promotion.
+
+## Privacy boundary
+
+The GitHub repository is public. Raw chat exports, raw candidate excerpts, customer names, project details and the local review workbook are not committed to it. The repository contains schema, extractor code, source hashes and aggregate coverage metadata only.
 
 ## Next data work
 

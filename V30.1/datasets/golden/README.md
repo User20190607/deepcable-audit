@@ -46,7 +46,7 @@ Only `ADJUDICATED` cases can enter the golden evaluation score. Keep baseline-ch
 
 ## Current v0.1 scope
 
-The September conversation export `chat-export-1792110211452.json` was retrieved from the user's Library. It contains 787 message objects (379 user, 408 assistant) and is 5,350,332 bytes. SHA-256 is recorded in `sources/manifest.json`.
+The September conversation export `chat-export-1792110211452.json` was retrieved from the user's Library. It contains 787 message objects (379 user, 408 assistant) and is 5,350,332 bytes. SHA-256 is recorded in `sources/manifest.json`. A local-only review workbook contains 158 lexical candidates, including 38 high-priority correction candidates. Because this repository is public, raw private chat excerpts and the workbook are deliberately not committed here.
 
 This differs from the prior audit report's stated 793 messages / 385 user messages. The discrepancy is recorded rather than silently reconciled. The current export has 158 cable-related user-message candidates using a conservative lexical filter; candidates are not gold labels.
 

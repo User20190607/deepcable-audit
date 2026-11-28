@@ -25,12 +25,16 @@
 ## Gates
 
 ### P0-A Rule Registry
-- [ ] JSON Schema or equivalent structural validator
-- [ ] Stable unique rule IDs
-- [ ] Provenance and scope validation
-- [ ] Duplicate and contradictory rule detection
-- [ ] Dependency closure and missing-dependency detection
-- [ ] Rulebook version and content hash
+- [x] Canonical structural validator in `v30core/rules/registry.py`
+- [x] Stable unique rule IDs
+- [x] Provenance and scope validation
+- [x] Duplicate-ID detection and conservative exact-condition conflict detection
+- [x] Dependency closure, missing-dependency detection and cycle detection
+- [x] Rulebook version and deterministic SHA-256 content hash
+- [x] Dependency-aware loading of active rules
+- [x] GitHub Actions compile + unit-test workflow
+- [ ] Legacy beta2 rulebook migration and reviewed rule-by-rule import
+- [ ] Semantic conflict review beyond exact structural matches
 
 ### P0-B Regression Evals
 - [ ] Golden cases are evidence-backed and reviewed
@@ -64,4 +68,10 @@
 
 ## Current execution status
 
-Only the V30.1 branch and planning documents are established at this point. No P0 implementation or test execution is claimed by this manifest.
+- V30.1 branch created from `main`; main remains unchanged.
+- P0-A registry implementation committed under `V30.1/v30core/rules/`.
+- Nine registry unit tests are defined.
+- GitHub Actions run #1 completed successfully for Python compilation and registry unit tests.
+- The beta2 rulebook has **not** yet been migrated into the canonical registry. Its legacy sections remain archived and authoritative until individually reviewed.
+- P0-B regression corpus is not complete. The current unit tests validate registry mechanics, not cable-domain correctness.
+- No production-ready claim is made.

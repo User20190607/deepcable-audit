@@ -10,8 +10,8 @@ import argparse, datetime as dt, hashlib, json, re
 from pathlib import Path
 
 CABLE_SIGNAL = re.compile(
-    r"(?:\\b(?:WDZ[A-Z0-9-]*|ZC-|ZR-|YJV|YJY|YJLHY|BYJ|BVR|BVV|RVV|RVVP|RVSP|RVS|RYJS|KVV|KVVP|VV|BTTRZ|BBTRZ|BTTZ|PV1F)\\b|"
-    r"\\d+\\s*[×xX*]\\s*\\d+(?:\\.\\d+)?|\\b\\d+(?:\\.\\d+)?\\s*(?:mm2|mm²|平方))",
+    r"(?:\b(?:WDZ[A-Z0-9-]*|ZC-|ZR-|YJV|YJY|YJLHY|BYJ|BVR|BVV|RVV|RVVP|RVSP|RVS|RYJS|KVV|KVVP|VV|BTTRZ|BBTRZ|BTTZ|PV1F)\b|"
+    r"\d+\s*[×xX*]\s*\d+(?:\.\d+)?|\b\d+(?:\.\d+)?\s*(?:mm2|mm²|平方))",
     re.IGNORECASE,
 )
 
@@ -24,10 +24,7 @@ def main() -> int:
     raw = args.source.read_bytes()
     source_hash = hashlib.sha256(raw).hexdigest()
     payload = json.loads(raw.decode("utf-8"))
-    if isinstance(payload, list) and payload:
-        conversation = payload[0]
-    else:
-        conversation = payload
+    conversation = payload[0] if isinstance(payload, list) and payload else payload
     messages = conversation.get("chat", {}).get("history", {}).get("messages", {})
     ordered = sorted(messages.values(), key=lambda m: m.get("timestamp", 0))
     rows = []
@@ -73,7 +70,7 @@ def main() -> int:
             },
         })
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text("".join(json.dumps(x, ensure_ascii=False) + "\\n" for x in rows), encoding="utf-8")
+    args.output.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in rows), encoding="utf-8")
     print(json.dumps({"source_sha256": source_hash, "messages": len(ordered), "candidates": len(rows), "output": str(args.output)}, ensure_ascii=False))
     return 0
 

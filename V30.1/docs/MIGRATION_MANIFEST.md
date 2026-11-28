@@ -47,6 +47,20 @@
 - [ ] Broader adversarial grammar/prefix corpus
 - [ ] Candidate-fix tests that require known defects to be corrected
 
+### Level 2 Agent Loop
+- [x] Bounded observe-plan-act-validate orchestration kernel
+- [x] Explicit allow-list for tools
+- [x] Revalidation after each tool action
+- [x] Maximum-step and repeated-action guards
+- [x] HOLD on planner stop or unresolved findings
+- [x] Five orchestration unit tests
+- [ ] Typed cable-domain tool contracts (parse/normalize/aggregate/audit/render/release)
+- [ ] Context Router integration and rulebook-hash trace
+- [ ] Correction event memory and adjudication lifecycle integration
+- [ ] Golden Dataset end-to-end replay
+- [ ] Optional model planner adapter behind strict schema validation
+- [ ] Production telemetry, idempotency and recovery tests
+
 ### P1 Experience Memory
 - [ ] Append-only correction event
 - [ ] Candidate status and reviewer decision
@@ -79,5 +93,6 @@
 - Nine registry unit tests are defined.
 - GitHub Actions run #1 completed successfully for Python compilation and registry unit tests.
 - The beta2 rulebook has **not** yet been migrated into the canonical registry. Its legacy sections remain archived and authoritative until individually reviewed.
-- P0-B is partially complete: beta2 defects are reproducibly characterized in CI; user-adjudicated golden corpus and candidate-fix tests remain outstanding.
+- P0-B is partially complete: beta2 defects are reproducibly characterized in CI; one image-backed golden case has been user-adjudicated; broader corpus and candidate-fix tests remain outstanding.
+- Level 2 initial kernel committed under `V30.1/v30core/agent_loop.py`; five tests cover orchestration mechanics. This is not yet a connected autonomous cable-processing agent.
 - No production-ready claim is made.

@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "dataset": "V30.1 Golden Dataset",
+  "case_id": "string; stable unique identifier",
+  "source": {
+    "source_file": "string",
+    "source_sha256": "string",
+    "conversation_title": "string|null",
+    "conversation_id": "string|null",
+    "message_id": "string",
+    "timestamp_unix": "integer|null",
+    "role": "user|assistant|system|unknown",
+    "attachment_refs": ["string"]
+  },
+  "input": {
+    "raw_text": "string; verbatim user source or source-row excerpt",
+    "source_rows": ["optional structured source rows; preserve original values"]
+  },
+  "adjudication": {
+    "status": "UNREVIEWED|NEEDS_CONTEXT|ADJUDICATED|REJECTED",
+    "authority": "USER_EXPLICIT|USER_CONFIRMED|CONTRACT|DRAWING|STANDARD_EVIDENCE|UNRESOLVED",
+    "decision_message_ids": ["message IDs carrying the decision"],
+    "decision_text": "verbatim decision text",
+    "expected": "object|null",
+    "reason": "string|null",
+    "reviewer": "user|assistant-assisted|independent-review|null",
+    "reviewed_at": "ISO-8601|null"
+  },
+  "labels": {
+    "expected_standardized_rows": "array|null",
+    "expected_status": "PASS|WARN|HOLD|BLOCK|null",
+    "expected_transformations": "array|null",
+    "expected_quantity_by_unit": "object|null",
+    "expected_tsv5": "string|null"
+  },
+  "quality": {
+    "split": "train|validation|test|unassigned",
+    "risk_tags": ["string"],
+    "duplicate_of": "case_id|null",
+    "notes": ["string"]
+  }
+}

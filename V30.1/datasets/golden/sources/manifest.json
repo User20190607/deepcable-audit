@@ -1,0 +1,50 @@
+{
+  "dataset_version": "V30.1-GOLDEN-0.1",
+  "created_at": "2026-11-28",
+  "sources": [
+    {
+      "source_id": "SRC-SEP-2026-CHAT",
+      "file_name": "chat-export-1792110211452.json",
+      "library_file_id": "file_0000000088808246912c92e441d13611",
+      "sha256": "cf35c1b974205e8dfafc3ef11c9d7f95ab153f4f9565c5b37f6d89eb5b1ed086",
+      "size_bytes": 5350332,
+      "conversation_title": "09月电线电缆清单标准化",
+      "message_objects": 787,
+      "user_messages": 379,
+      "assistant_messages": 408,
+      "candidate_user_messages": 158,
+      "status": "retrieved_and_hashed",
+      "limitations": [
+        "Export contains 787 message objects, while prior audit report stated 793; discrepancy unresolved.",
+        "Attachment references exist but original image bytes are not embedded in this export.",
+        "Lexical candidates are unreviewed and are not golden labels."
+      ]
+    },
+    {
+      "source_id": "SRC-OCT-AUDIT-2026",
+      "file_name": "2026-10_chat_export.txt",
+      "reported_characters": 92365,
+      "reported_role_blocks": 121,
+      "status": "referenced_in_audit_not_retrieved",
+      "limitations": [
+        "Exact source file was not located in Library search; do not substitute another export."
+      ]
+    },
+    {
+      "source_id": "SRC-OCT-NON-GROUP",
+      "file_name": "2026-10_非群聊.txt",
+      "library_file_id": "file_00000000b88c821087db559936a75945",
+      "size_bytes": 1031412,
+      "status": "retrieved_but_scope_unconfirmed",
+      "limitations": [
+        "Different export from the 92,365-character audit source; excluded from this dataset release until scope is confirmed."
+      ]
+    }
+  ],
+  "policy": {
+    "assistant_outputs_are_gold": false,
+    "unreviewed_candidates_scored": false,
+    "split_unit": "conversation_or_batch",
+    "raw_private_chat_committed_to_repo": false
+  }
+}

@@ -53,13 +53,13 @@ def validate_rule(rule: Any, index: int = 0) -> list[str]:
     for field in ("rule_id", "name", "domain"):
         if not _nonempty_string(rule[field]):
             errors.append(f"{where}.{field} must be a non-empty string")
-    if rule["status"] not in ALLOWED_STATUS:
+    if not isinstance(rule["status"], str) or rule["status"] not in ALLOWED_STATUS:
         errors.append(f"{where}.status is invalid")
-    if rule["provenance"] not in ALLOWED_PROVENANCE:
+    if not isinstance(rule["provenance"], str) or rule["provenance"] not in ALLOWED_PROVENANCE:
         errors.append(f"{where}.provenance is invalid")
-    if rule["scope"] not in ALLOWED_SCOPE:
+    if not isinstance(rule["scope"], str) or rule["scope"] not in ALLOWED_SCOPE:
         errors.append(f"{where}.scope is invalid")
-    if rule["severity"] not in ALLOWED_SEVERITY:
+    if not isinstance(rule["severity"], str) or rule["severity"] not in ALLOWED_SEVERITY:
         errors.append(f"{where}.severity is invalid")
     if not isinstance(rule["condition"], dict):
         errors.append(f"{where}.condition must be an object")

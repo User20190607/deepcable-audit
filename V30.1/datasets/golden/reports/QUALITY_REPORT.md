@@ -18,10 +18,10 @@
 
 `GOLD-IMG-20261128-001` is an image-backed engineering cable schedule. The user explicitly confirmed:
 - All ZC-YJV rows in this image use 0.6/1kV.
-- ZR-BVR rows use `ZR-BVR-450/750V 1×cross-section`.
+- Raw ZR-BVR rows normalize under the existing general rule `ZR→ZC`, yielding `ZC-BVR-450/750V 1×cross-section`.
 - The established business conversion for this case is 1 roll = 100m.
 
-The case has 17 source rows and 10 canonical aggregated rows. The Decimal quantity total is 11,038m. The adjudication is scoped to this image case and is not a global voltage rule.
+The case has 17 source rows and 10 canonical aggregated rows. The Decimal quantity total is 11,038m. The 0.6/1kV voltage confirmation is scoped to this image case and is not a global voltage rule. The ZR→ZC prefix normalization is an already-confirmed global V30 cable rule.
 
 Equipment labels in the public JSON fixture are anonymized as DEV-01..DEV-10. Original customer/project details remain in the user's local workbook and are not committed to this public repository.
 

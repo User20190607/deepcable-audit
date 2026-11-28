@@ -29,10 +29,10 @@ class AdjudicatedGoldenCaseTests(unittest.TestCase):
 
     def test_bvr_profile_and_roll_conversion(self):
         rows = self.case["labels"]["expected_standardized_rows"]
-        bvr = {r["model"]: r["quantity"] for r in rows if r["model"].startswith("ZR-BVR-")}
+        bvr = {r["model"]: r["quantity"] for r in rows if r["model"].startswith("ZC-BVR-")}
         self.assertEqual(bvr, {
-            "ZR-BVR-450/750V 1×2.5": "4900",
-            "ZR-BVR-450/750V 1×4": "5600",
+            "ZC-BVR-450/750V 1×2.5": "4900",
+            "ZC-BVR-450/750V 1×4": "5600",
         })
 
     def test_decimal_quantity_conservation(self):

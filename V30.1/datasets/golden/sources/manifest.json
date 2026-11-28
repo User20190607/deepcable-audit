@@ -39,6 +39,33 @@
       "limitations": [
         "Different export from the 92,365-character audit source; excluded from this dataset release until scope is confirmed."
       ]
+    },
+    {
+      "source_id": "SRC-IMG-20261128-001",
+      "file_name": "image(20261128-082249).png",
+      "sha256": "da948ca3dfabe67ec3be9abc36f2aff95cf6535d7a62d3bc1eed2c2bbb38c81d",
+      "image_dimensions_px": [
+        374,
+        857
+      ],
+      "extracted_source_rows": 17,
+      "aggregated_view_rows": 10,
+      "quantity_unit_conversion": {
+        "ZR-BVR-2.5mm²": {
+          "source": "49卷",
+          "factor_m_per_roll": "100",
+          "result": "4900m"
+        },
+        "ZR-BVR-4mm²": {
+          "source": "56卷",
+          "factor_m_per_roll": "100",
+          "result": "5600m"
+        }
+      },
+      "converted_quantity_total_m": "11038",
+      "adjudication_status": "NEEDS_CONTEXT",
+      "golden_scoring": "excluded_pending_voltage_profile_and_aggregation_adjudication",
+      "privacy_note": "Raw image and row-level content are retained locally; only hash and aggregate metadata are committed to this public repository."
     }
   ],
   "policy": {

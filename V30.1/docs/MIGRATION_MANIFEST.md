@@ -37,11 +37,15 @@
 - [ ] Semantic conflict review beyond exact structural matches
 
 ### P0-B Regression Evals
-- [ ] Golden cases are evidence-backed and reviewed
-- [ ] Regression runner emits machine-readable report
-- [ ] Adversarial cases cover near-match models and prefix boundaries
-- [ ] Property tests cover Decimal arithmetic and quantity conservation
-- [ ] No test is marked passed without execution evidence
+- [x] Frozen beta2 runtime snapshot pinned to source SHA
+- [x] Ten named audit cases recorded in JSONL with evidence basis
+- [x] Fifteen executable baseline characterization/control tests
+- [x] CI runs registry and beta2 regression suites
+- [x] Machine-readable test execution is available from GitHub Actions
+- [ ] User-adjudicated golden expected outputs from raw source rows
+- [ ] Property-based tests for quantity conservation, packaging and colour allocation
+- [ ] Broader adversarial grammar/prefix corpus
+- [ ] Candidate-fix tests that require known defects to be corrected
 
 ### P1 Experience Memory
 - [ ] Append-only correction event
@@ -70,8 +74,10 @@
 
 - V30.1 branch created from `main`; main remains unchanged.
 - P0-A registry implementation committed under `V30.1/v30core/rules/`.
+- P0-B baseline characterization committed: frozen beta2 snapshot, 10-case JSONL manifest and 15 executable tests.
+- GitHub Actions run # for P0-B completed successfully; see [execution report](P0-B_REGRESSION_EVAL_REPORT.md).
 - Nine registry unit tests are defined.
 - GitHub Actions run #1 completed successfully for Python compilation and registry unit tests.
 - The beta2 rulebook has **not** yet been migrated into the canonical registry. Its legacy sections remain archived and authoritative until individually reviewed.
-- P0-B regression corpus is not complete. The current unit tests validate registry mechanics, not cable-domain correctness.
+- P0-B is partially complete: beta2 defects are reproducibly characterized in CI; user-adjudicated golden corpus and candidate-fix tests remain outstanding.
 - No production-ready claim is made.

@@ -35,6 +35,7 @@ The archived baseline remains immutable during V30.1 work. New implementation mu
 
 - P0-A Rule Registry: implemented; structural and dependency checks are covered by nine unit tests.
 - GitHub Actions: Python compile and registry unit-test job completed successfully.
-- P0-B cable-domain regression corpus: planned, not yet complete.
+- P0-B beta2 baseline characterization: implemented; 15 executable tests pass in CI. Golden correctness corpus and candidate-fix tests remain outstanding.
+- P0-B report: `docs/P0-B_REGRESSION_EVAL_REPORT.md`.
 - Legacy beta2 rulebook migration: pending review; archived source remains unchanged.
 - V30.1 is still an upgrade-in-progress, not production-ready.

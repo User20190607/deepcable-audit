@@ -147,7 +147,7 @@
       "wire_final_profile": "ZC-BVR-450/750V 1×截面",
       "roll_length_m": "100"
     },
-    "reason": "本图片的电压及BVR结构由用户本轮确认；ZR→ZC型号映射沿用用户此前已确认的全局业务规则。",
+    "reason": "本图片的电压及BVR结构由用户本轮确认；ZR→ZC型号映射沿用用户此前已确认的全局业务规则。 The already-confirmed general V30 cable normalization rule ZR→ZC also applies; this prefix conversion is not a new project-specific exception.",
     "reviewer": "user",
     "reviewed_at": "2026-11-28"
   },
@@ -221,7 +221,8 @@
       "Apply previously user-confirmed global mapping ZR-BVR→ZC-BVR",
       "49 rolls × 100m/roll = 4900m",
       "56 rolls × 100m/roll = 5600m",
-      "Same canonical model and unit aggregated; source rows and device references retained"
+      "Same canonical model and unit aggregated; source rows and device references retained",
+      "Global cable normalization rule: ZR prefix is normalized to ZC; preserve BVR, 450/750V and 1×cross-section."
     ],
     "expected_quantity_by_unit": {
       "m": "11038"

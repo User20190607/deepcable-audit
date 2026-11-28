@@ -19,6 +19,8 @@ The archived baseline remains immutable during V30.1 work. New implementation mu
 4. P1 — Context Router: dependency-aware rule loading and run trace.
 5. P2 — Quantity Vector and reversible aggregation.
 6. P3 — Expert routing and release hardening.
+7. Level 2 — Bounded Agent Loop: observe → plan → allow-listed tool → validate → continue/HOLD.
+8. Level 3 — Shared-weight Transformer Loop research (deferred until Level 2 is measured).
 
 ## Non-negotiable invariants
 
@@ -35,7 +37,8 @@ The archived baseline remains immutable during V30.1 work. New implementation mu
 
 - P0-A Rule Registry: implemented; structural and dependency checks are covered by nine unit tests.
 - GitHub Actions: Python compile and registry unit-test job completed successfully.
-- P0-B beta2 baseline characterization: implemented; 15 executable tests pass in CI. Golden correctness corpus and candidate-fix tests remain outstanding.
+- P0-B beta2 baseline characterization: implemented; 15 executable tests pass in CI. One image-backed user-adjudicated golden case is recorded; broader golden corpus and candidate-fix tests remain outstanding.
+- Level 2 Agent Loop: bounded provider-neutral orchestration kernel and five unit tests committed; scripted planner tests validate orchestration only. No autonomous LLM planner or production cable tools are connected yet.
 - P0-B report: `docs/P0-B_REGRESSION_EVAL_REPORT.md`.
 - Legacy beta2 rulebook migration: pending review; archived source remains unchanged.
 - V30.1 is still an upgrade-in-progress, not production-ready.
